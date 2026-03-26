@@ -1,0 +1,7 @@
+Total Users found: 6
+ID: 1 | Role: superadmin | CollegeSlug: '' | Bounded: No
+ID: 2 | Role: admin | CollegeSlug: 'engineering' | Bounded: Yes
+ID: 3 | Role: admin | CollegeSlug: 'agriculture' | Bounded: Yes
+ID: 4 | Role: admin | CollegeSlug: 'fisheries' | Bounded: Yes
+ID: 5 | Role: editor | CollegeSlug: 'engineering' | Bounded: Yes
+ID: 6 | Role: admin | CollegeSlug: 'education' | Bounded: Yes

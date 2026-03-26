@@ -1,0 +1,13 @@
+
+[2026-03-21 14:20:50] 
+local.ERROR: Facebook API 
+error for College of 
+Engineering: 
+{"error":{"message":"Error 
+validating application. 
+Application has been deleted."
+,"type":"OAuthException","code
+":190,"fbtrace_id":"AG5NAtz8dB
+7bpIubjLGgdc3"}}  
+
+

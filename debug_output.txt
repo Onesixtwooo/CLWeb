@@ -1,0 +1,5 @@
+
+Warning: PHP Startup: Unable to load dynamic library 'xmlrpc' (tried: D:\xampp\php\ext\xmlrpc (The specified module could not be found), D:\xampp\php\ext\php_xmlrpc.dll (The specified module could not be found)) in Unknown on line 0
+Simulating Request and Capturing Output...
+FOUND DEBUG COMMENT! Count: 1
+Page does NOT say 'No news available' - likely showing articles.

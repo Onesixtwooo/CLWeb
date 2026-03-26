@@ -1,0 +1,1489 @@
+/**
+ * College page styles (formerly college-engineering.css)
+ * Scoped to .engineering-header, .engineering-navbar, .college-page
+ */
+
+/* Loader screen */
+.engineering-loader {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.engineering-loader.engineering-loader-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.engineering-loader-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+}
+
+.engineering-loader-logo {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: #f8f9fa;
+    padding: 0.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    animation: engineering-loader-pulse 1.5s ease-in-out infinite;
+}
+
+.engineering-loader-title {
+    margin: 0;
+    font-family: "Libre Franklin", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--college-header-color, #86090a);
+    letter-spacing: 0.5px;
+}
+
+.engineering-loader-subtitle {
+    margin: 0;
+    font-family: "Libre Franklin", sans-serif;
+    font-size: 0.875rem;
+    color: #4b5563;
+}
+
+.engineering-loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(134, 9, 10, 0.2);
+    border-top-color: var(--college-header-color, #86090a);
+    border-radius: 50%;
+    animation: engineering-loader-spin 0.8s linear infinite;
+}
+
+@keyframes engineering-loader-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.05);
+        opacity: 0.95;
+    }
+}
+
+@keyframes engineering-loader-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Fixed wrapper: top bar + main header so both stay visible at top */
+.engineering-header-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+
+.engineering-nav-outer {
+    overflow: visible;
+    transition: max-height 0.3s ease;
+    max-height: 120px;
+}
+
+.engineering-header-wrapper .header.engineering-header {
+    position: static;
+    overflow: visible;
+    transition: transform 0.3s ease;
+}
+
+/* On scroll: hide main header, keep top bar (college border) visible */
+.engineering-header-wrapper.engineering-header-scrolled .engineering-nav-outer {
+    max-height: 0;
+    overflow: hidden;
+}
+
+.engineering-header-wrapper.engineering-header-scrolled .header.engineering-header {
+    transform: translateY(-100%);
+}
+
+/* Top header bar (main contact bar above main header) – remains when nav hidden */
+.engineering-top-header {
+    background: var(--college-accent-color, #009639);
+    color: #ffffff;
+    font-size: 0.8125rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+/* College border strip – stays visible when main header is hidden on scroll */
+.engineering-header-wrapper.engineering-header-scrolled .engineering-top-header::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 3px;
+    background: var(--college-header-color, #86090a);
+    transform: translateY(100%);
+}
+
+.engineering-top-header-inner {
+    padding: 0.25rem 0;
+}
+
+.engineering-top-header-clsu {
+    line-height: 0;
+    opacity: 0.95;
+    transition: opacity 0.2s ease;
+}
+
+.engineering-top-header-clsu:hover {
+    opacity: 1;
+}
+
+.engineering-top-header-clsu-img {
+    display: block;
+    height: 26px;
+    width: auto;
+    object-fit: contain;
+}
+
+.engineering-top-header-link {
+    color: #ffffff;
+    text-decoration: none;
+    opacity: 0.95;
+}
+
+.engineering-top-header-link:hover {
+    color: #ffffff;
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.engineering-top-header-icon {
+    display: inline-flex;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.engineering-top-header-icon svg {
+    display: block;
+}
+
+.engineering-top-header-social {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+}
+
+.engineering-top-header-social:hover {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.2);
+    opacity: 1;
+}
+
+.engineering-top-header-social svg {
+    display: block;
+}
+
+/* Header & Navbar */
+.engineering-header {
+    background: var(--college-header-color, #86090a);
+}
+
+/* Content clearance for fixed top bar + main header (top bar ~28px + nav ~80px) */
+.college-page .retro-hero {
+    padding-top: 118px;
+    transition: padding-top 0.3s ease;
+}
+
+.college-page .hero-slider-container {
+    height: calc(100vh - 118px);
+    min-height: calc(100vh - 118px);
+    transition: height 0.3s ease, min-height 0.3s ease;
+}
+
+/* When main header is hidden on scroll, only top bar remains – reduce content padding */
+body.engineering-nav-hidden.college-page .retro-hero {
+    padding-top: 2.5rem;
+}
+
+body.engineering-nav-hidden.college-page .hero-slider-container {
+    height: calc(100vh - 2.5rem);
+    min-height: calc(100vh - 2.5rem);
+}
+
+.engineering-navbar {
+    background: var(--college-header-color, #86090a);
+}
+
+.engineering-navbar .nav-link,
+.engineering-navbar .retro-heading,
+.engineering-navbar .retro-subtitle {
+    color: #ffffff;
+}
+
+.engineering-navbar .logo-full-text {
+    font-family: "Libre Franklin", sans-serif;
+}
+
+.college-page .retro-section-title {
+    font-family: "Libre Franklin", sans-serif;
+    text-decoration: none !important;
+}
+
+.college-page .section-header {
+    gap: 0 !important;
+    margin-bottom: 2.5rem !important;
+}
+
+.college-page .section-header .retro-section-title,
+.college-page .section-header .retro-section-text,
+.college-page .about-header .retro-section-title,
+.college-page .retro-section-title.mt-3 {
+    margin-top: 0.25rem !important;
+    margin-bottom: 0 !important;
+}
+
+.college-page .section-header .retro-section-title,
+.college-page .section-header .retro-section-text {
+    text-align: center !important;
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.college-page .retro-section-text {
+    margin-top: 0.25rem !important;
+}
+
+.engineering-navbar .nav-link:hover,
+.engineering-navbar .nav-link:focus,
+.engineering-navbar .nav-link:active,
+.engineering-navbar .nav-link.show,
+.engineering-navbar .show>.nav-link {
+    color: #ffffff;
+    background-color: transparent !important;
+}
+
+/* News & Announcements */
+.college-page .news-section-modern:hover::before {
+    border-color: rgba(134, 9, 10, 0.45);
+    /* Keeping static or could perform calc/opacity on var if supported, simplified for now */
+    box-shadow: 0 0 18px rgba(134, 9, 10, 0.25);
+}
+
+.college-page .news-section-modern:hover {
+    box-shadow: 0 8px 30px rgba(134, 9, 10, 0.15);
+    border-color: rgba(134, 9, 10, 0.2);
+}
+
+.college-page .news-card-modern:hover .news-card-title {
+    color: var(--college-header-color, #86090a);
+}
+
+.college-page .news-card-category {
+    color: var(--college-header-color, #86090a);
+}
+
+.college-page .news-slider-arrow {
+    background: var(--college-header-color, #86090a);
+    box-shadow: 0 4px 12px rgba(134, 9, 10, 0.3);
+}
+
+.college-page .news-slider-arrow:hover {
+    background: color-mix(in srgb, var(--college-header-color, #86090a), black 20%);
+    box-shadow: 0 6px 16px rgba(134, 9, 10, 0.4);
+}
+
+.college-page .announcements-section-modern:hover::before {
+    border-color: rgba(134, 9, 10, 0.45);
+    box-shadow: 0 0 18px rgba(134, 9, 10, 0.25);
+}
+
+.college-page .announcements-section-modern:hover {
+    box-shadow: 0 8px 30px rgba(134, 9, 10, 0.15);
+    border-color: rgba(134, 9, 10, 0.2);
+}
+
+.college-page .announcement-item-modern:hover {
+    border-color: var(--college-header-color, #86090a);
+    box-shadow: 0 8px 24px rgba(134, 9, 10, 0.15);
+    background: linear-gradient(to right, rgba(134, 9, 10, 0.03), white);
+}
+
+.college-page .announcement-item-modern:hover::before {
+    background: var(--college-header-color, #86090a);
+}
+
+.college-page .announcement-item-modern:hover .announcement-title {
+    color: var(--college-header-color, #86090a);
+}
+
+.college-page .announcement-date-block {
+    background: var(--college-header-gradient, linear-gradient(135deg, #86090a 0%, #b31214 100%));
+    box-shadow: 0 4px 12px rgba(134, 9, 10, 0.3);
+}
+
+/* Navbar: click-only dropdowns */
+.engineering-navbar .nav-item.dropdown .dropdown-menu {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    transform: translateY(-10px);
+    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+}
+
+.engineering-navbar .nav-item.dropdown:hover .dropdown-menu {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.engineering-navbar .nav-item.dropdown .dropdown-menu.show {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateY(0);
+}
+
+.engineering-navbar .dropdown-menu {
+    background-color: #ffffff;
+    z-index: 1050;
+}
+
+.engineering-navbar .dropdown-item,
+.engineering-navbar .dropdown-item:hover,
+.engineering-navbar .dropdown-item:focus,
+.engineering-navbar .dropdown-item.active,
+.engineering-navbar .dropdown-item:active {
+    background-color: #ffffff;
+    color: #111827;
+}
+
+.engineering-navbar .navbar-toggler {
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+/* Events section */
+.college-page .events-section-title {
+    color: var(--college-header-color, #86090a);
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.college-page .events-layout {
+    display: grid;
+    grid-template-columns: 1.1fr 0.4fr 1.5fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.college-page .events-poster {
+    background: #f3f4f6;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #eee;
+}
+
+.college-page .events-poster img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+}
+
+.college-page .events-dates {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    color: #6b7280;
+    font-weight: 700;
+    text-align: center;
+}
+
+.college-page .events-dates span {
+    display: block;
+}
+
+.college-page .events-date-num {
+    font-size: 2.5rem;
+    color: #6b7280;
+    line-height: 1;
+}
+
+.college-page .events-date-month {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.college-page .events-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.college-page .events-subtitle {
+    margin: 0;
+    font-weight: 800;
+    color: var(--college-header-color, #86090a);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.college-page .events-item {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    background: #fff;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.college-page .events-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.college-page .events-item.highlight {
+    background: var(--college-header-color, #86090a);
+    color: #fff;
+    border-color: var(--college-header-color, #86090a);
+}
+
+.college-page .events-item-title {
+    font-weight: 700;
+    margin: 0;
+}
+
+.college-page .events-item-meta {
+    font-size: 0.9rem;
+    color: #4b5563;
+}
+
+.college-page .events-item.highlight .events-item-meta {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+.college-page .events-link {
+    margin-top: 1.5rem;
+    text-align: right;
+    color: var(--college-header-color, #86090a);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.college-page .events-link a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* .events-calendar-header uses Bootstrap .d-flex .align-items-center .justify-content-between .flex-wrap .gap-2 .mb-4 */
+
+.college-page .events-calendar-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    font-size: 1.5rem;
+    background: var(--college-header-color, #86090a);
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+}
+
+.college-page .events-pill {
+    color: #fff;
+    font-size: 0.85rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.college-page .events-legend {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.college-page .events-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.college-page .events-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+}
+
+.college-page .event-card {
+    position: relative;
+    border-radius: 14px;
+    overflow: hidden;
+    background: #1f2937;
+    color: #fff;
+    min-height: 170px;
+    text-decoration: none;
+    display: flex;
+    align-items: flex-end;
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.college-page .event-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+}
+
+.college-page .event-card img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.8);
+}
+
+.college-page .event-card-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    background: rgba(0, 0, 0, 0.55);
+}
+
+.college-page .event-card-tag {
+    display: inline-block;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 0.35rem;
+}
+
+.college-page .event-card-tag.news {
+    background: #ffffff;
+    color: var(--college-header-color, #86090a);
+}
+
+.college-page .event-card-tag.announcement {
+    background: #fdecea;
+    color: var(--college-header-color, #86090a);
+}
+
+.college-page .event-card-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 0.95rem;
+}
+
+.college-page .event-card-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+}
+
+.college-page .event-date-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: #fff;
+    color: #111827;
+    border-radius: 8px;
+    padding: 0.3rem 0.45rem;
+    text-align: center;
+    font-weight: 800;
+    min-width: 48px;
+    z-index: 2;
+}
+
+.college-page .event-date-badge .month {
+    background: transparent;
+    color: #111827;
+    border-radius: 0;
+    padding: 0;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-bottom: 0.2rem;
+}
+
+.college-page .event-date-badge .day {
+    font-size: 0.65rem;
+    line-height: 1;
+}
+
+.college-page .events-view-all {
+    background: var(--college-header-color, #86090a);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+}
+
+.college-page .events-view-all:hover {
+    background: color-mix(in srgb, var(--college-header-color, #86090a), black 20%);
+}
+
+@media (max-width: 992px) {
+    .college-page .events-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .college-page .events-dates {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+}
+
+.retro-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: "Libre Franklin", sans-serif;
+}
+
+.retro-section-title {
+    font-family: "acumin-pro", sans-serif;
+    font-size: 2.5rem;
+    color: var(--foreground);
+    font-weight: 700;
+    text-decoration: underline;
+    text-decoration-color: #e0a70d;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 0.35em;
+}
+
+.retro-section-text {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    padding-right: 2rem;
+    margin-top: 1rem;
+    text-align: left;
+}
+
+/* Rich Text Tables */
+.article-body table, 
+.retro-section-text table, 
+.rich-card-body table {
+    table-layout: fixed;
+    width: 100% !important;
+    border-collapse: collapse;
+    margin-bottom: 1rem;
+}
+.article-body td, .article-body th, 
+.retro-section-text td, .retro-section-text th, 
+.rich-card-body td, .rich-card-body th {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color, #e5e7eb);
+}
+
+/* Programs Section */
+.programs {
+    background: #f8fbfd;
+}
+
+.programs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.retro-card {
+    background: white;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0;
+    position: relative;
+    overflow: hidden;
+    min-height: 350px;
+}
+
+.program-card-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.6));
+    border-radius: 1.5rem;
+    z-index: 0;
+    transition: var(--transition);
+}
+
+.retro-card:hover .program-card-overlay {
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.75));
+}
+
+.retro-card-border {
+    position: absolute;
+    inset: 0;
+    border-radius: 1.5rem;
+    border: 2px solid transparent;
+    transition: var(--transition);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.retro-card:hover {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--primary);
+    transform: translateY(-4px);
+}
+
+.retro-card:hover .retro-card-border {
+    border-color: var(--primary);
+}
+
+.retro-card>*:not(.program-card-overlay):not(.retro-card-border) {
+    position: relative;
+    z-index: 1;
+}
+
+/* Program card: title at bottom, reveal full content on hover */
+.program-card .retro-card-title {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.3s ease;
+    padding: 0;
+    margin: 0;
+    position: relative;
+    z-index: 3;
+}
+
+.program-card .retro-card-text,
+.program-card .retro-link {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(20px);
+    transition: opacity 0.3s ease, transform 0.3s ease, max-height 0.3s ease;
+    margin: 0;
+    padding: 0;
+}
+
+.program-card:hover .retro-card-title {
+    margin: 0;
+    padding: 0;
+}
+
+.program-card:hover .retro-card-text {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.program-card:hover .retro-link {
+    opacity: 1;
+    max-height: 500px;
+    transform: translateY(0);
+    padding: 0;
+    margin-top: 1rem;
+}
+
+.retro-card-title,
+.retro-card-text {
+    color: white !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.program-card .retro-card-title,
+.program-card .retro-card-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.program-card .retro-link {
+    color: white !important;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.program-card .retro-card-title,
+.program-card .retro-card-text {
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.program-card .retro-link {
+    color: white !important;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.retro-icon {
+    font-size: 2.5rem;
+    height: 56px;
+    width: 56px;
+    background: rgba(86, 82, 179, 0.1);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition);
+}
+
+.retro-card:hover .retro-icon {
+    background: var(--primary);
+    color: white;
+}
+
+.retro-card-title {
+    font-family: "acumin-pro", sans-serif;
+    font-size: 1.5rem;
+    color: white !important;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.retro-card-text {
+    color: white !important;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* More specific selectors to override Bootstrap */
+.retro-card .retro-card-title,
+.retro-card h3.retro-card-title {
+    color: white !important;
+}
+
+.retro-card .retro-card-text,
+.retro-card p.retro-card-text {
+    color: white !important;
+}
+
+.retro-link {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: fit-content;
+    font-family: "Libre Franklin", sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+}
+
+.retro-link:hover {
+    gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Testimonials – layout like reference (maroon bg, left image, right quote card, decorative quotes, dots, CTA) */
+.college-page .testimonials-section {
+    background: linear-gradient(135deg, #86090a 0%, #6f0708 100%);
+    color: #ffffff;
+}
+
+.college-page .testimonials-subtitle {
+    max-width: 680px;
+    margin: 0 auto;
+}
+
+.college-page .testimonial-layout {
+    min-height: 320px;
+}
+
+/* Large decorative quotation marks */
+.college-page .testimonial-quote-mark {
+    position: absolute;
+    font-family: Georgia, serif;
+    font-size: clamp(4rem, 12vw, 8rem);
+    line-height: 1;
+    color: rgba(255, 255, 255, 0.25);
+    pointer-events: none;
+    user-select: none;
+}
+
+.college-page .testimonial-quote-open {
+    top: 0.5rem;
+    left: 0.5rem;
+}
+
+.college-page .testimonial-quote-close {
+    bottom: 0.5rem;
+    right: 0.5rem;
+    color: rgba(255, 255, 255, 0.35);
+}
+
+/* Slider: one slide visible */
+.college-page .testimonial-slider {
+    position: relative;
+}
+
+.college-page .testimonial-slide {
+    display: none;
+}
+
+.college-page .testimonial-slide.active {
+    display: block;
+    animation: testimonial-fade 0.4s ease;
+}
+
+@keyframes testimonial-fade {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.college-page .testimonial-row {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Left: image card */
+.college-page .testimonial-image-card {
+    height: 100%;
+    min-height: 280px;
+    background: #1f2937;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.college-page .testimonial-image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Right: quote card (light off-white, overlaps slightly) */
+.college-page .testimonial-quote-card {
+    background: #faf8f5;
+    color: #1f2937;
+    padding: 2rem 2.25rem;
+    min-height: 280px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+    margin-left: 0;
+    position: relative;
+    z-index: 1;
+}
+
+@media (max-width: 991px) {
+    .college-page .testimonial-quote-card {
+        margin-top: 0;
+    }
+}
+
+.college-page .testimonial-quote {
+    font-family: "Libre Franklin", sans-serif;
+    font-size: 1rem;
+    line-height: 1.65;
+    color: #374151;
+    margin: 0 0 1.25rem 0;
+    border: none;
+    padding: 0;
+}
+
+.college-page .testimonial-attribution {
+    margin: 0;
+}
+
+.college-page .testimonial-quote-card .testimonial-name {
+    font-weight: 700;
+    color: #86090a;
+    font-size: 1rem;
+}
+
+.college-page .testimonial-quote-card .testimonial-role,
+.college-page .testimonial-quote-card .testimonial-degree {
+    color: #6b7280;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+/* Pagination dots */
+.college-page .testimonial-dots {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.college-page .testimonial-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.college-page .testimonial-dot:hover {
+    border-color: #ffffff;
+}
+
+.college-page .testimonial-dot.active {
+    background: #ffffff;
+    border-color: #ffffff;
+}
+
+/* CTA button */
+.college-page .testimonial-cta-btn {
+    background: #faf8f5;
+    color: #86090a;
+    font-family: "Libre Franklin", sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.college-page .testimonial-cta-btn:hover {
+    background: #ffffff;
+    color: #6f0708;
+    transform: translateY(-1px);
+}
+
+/* Hero & buttons */
+.college-page .retro-stamp {
+    font-size: 20px;
+    background: linear-gradient(135deg, #86090a 0%, #b31214 100%);
+    box-shadow: 0 2px 8px rgba(134, 9, 10, 0.35);
+}
+
+.college-page .retro-button {
+    background: linear-gradient(135deg, #86090a 0%, #b31214 100%) !important;
+    border-color: #86090a !important;
+}
+
+.college-page .retro-button:hover {
+    background: linear-gradient(135deg, #6f0708 0%, #9e0f11 100%) !important;
+    border-color: #6f0708 !important;
+}
+
+.college-page .retro-button-outline {
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
+.college-page .retro-button-outline:hover {
+    background: #ffffff;
+    color: #86090a;
+    border-color: #ffffff;
+}
+
+.college-page .hero-overlay {
+    background: rgba(134, 9, 10, 0.55);
+}
+
+/* Featured Video section */
+#featured-video .engineering-featured-video iframe {
+    border: 0;
+}
+
+/* Hero content centered */
+.college-page .hero-slide-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.college-page .hero-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 640px;
+}
+
+.college-page .hero-buttons {
+    justify-content: center;
+}
+
+/* FAQ */
+.college-page .faq-section {
+    background: #f9fafb;
+}
+
+.college-page .faq-intro {
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* .faq-intro uses Bootstrap .mb-5 for bottom margin */
+
+.college-page .faq-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 2rem;
+}
+
+.college-page .faq-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem 1.75rem;
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.college-page .faq-card-body {
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, max-height 0.25s ease, transform 0.25s ease;
+}
+
+.college-page .faq-card.is-open .faq-card-body {
+    opacity: 1;
+    max-height: 400px;
+    transform: translateY(0);
+}
+
+.college-page .faq-card-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    background: rgba(134, 9, 10, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #86090a;
+    margin-bottom: 0.5rem;
+}
+
+.college-page .faq-card-title {
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.college-page .faq-card-text {
+    color: #4b5563;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Footer Styles */
+.engineering-footer {
+    background-color: #111827;
+    color: #9ca3af;
+    padding: 5rem 0 2rem;
+    font-size: 0.95rem;
+    position: relative;
+    z-index: 10;
+}
+
+.engineering-footer .widget-title {
+    color: #ffffff;
+    font-family: "Libre Franklin", sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.engineering-footer a {
+    color: #d1d5db;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.engineering-footer a:hover {
+    color: #ffffff;
+}
+
+.engineering-footer .social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    color: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.engineering-footer .social-link:hover {
+    background: #ffffff;
+    color: #111827;
+    transform: translateY(-2px);
+}
+
+.engineering-footer .contact-icon {
+    color: #ffffff;
+    opacity: 0.7;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.engineering-footer .footer-links li {
+    margin-bottom: 0.75rem;
+}
+
+.engineering-footer .border-white-10 {
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Standardized Rich Footer */
+.footer-rich {
+    background-color: #111827;
+    color: #9ca3af;
+    padding: 5rem 0 2rem;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    font-family: Inter, sans-serif;
+}
+
+.footer-rich .container {
+    position: relative;
+    z-index: 1;
+}
+
+.footer-grid-rich {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    gap: 3rem;
+    align-items: start;
+}
+
+@media (max-width: 991px) {
+    .footer-grid-rich {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.footer-brand .footer-logos {
+    margin-bottom: 0.5rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-brand .footer-logos img {
+    height: 60px;
+    width: auto;
+}
+
+.footer-brand h3 {
+    color: #fff;
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+    letter-spacing: 0.5px;
+    font-family: "Libre Franklin", sans-serif;
+}
+
+.footer-brand p {
+    margin-bottom: 0.5rem;
+}
+
+.footer-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 1.5rem 0;
+}
+
+.footer-heading {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    letter-spacing: 1px;
+    font-family: "Libre Franklin", sans-serif;
+}
+
+.footer-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-list li {
+    margin-bottom: 0.75rem;
+}
+
+.footer-list a {
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-list a:hover {
+    color: #fff;
+    padding-left: 5px;
+}
+
+.footer-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-contact li {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.75rem;
+    line-height: 1.6;
+}
+
+.footer-contact a {
+    color: #9ca3af;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer-contact a:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+.footer-social-title {
+    font-size: 0.85rem;
+    font-weight: 700;
+    opacity: 0.8;
+    letter-spacing: 1px;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    color: #fff;
+    font-family: "Libre Franklin", sans-serif;
+}
+
+.footer-social {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.footer-social a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border-radius: 50%;
+    text-decoration: none;
+    transition: all 0.2s;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.footer-social a:hover {
+    background: #86090a;
+    color: #fff;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(134, 9, 10, 0.4);
+}
+
+.footer-social a svg {
+    display: block;
+}
+
+.footer-copy {
+    margin-top: 2rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+}
+
+/* Mobile adjustments for header spacing */
+@media (max-width: 991px) {
+    .college-page .retro-hero {
+        padding-top: 80px;
+    }
+
+    .college-page .hero-slider-container {
+        height: calc(100vh - 80px);
+        min-height: calc(100vh - 80px);
+    }
+}
+
+@media (max-width: 576px) {
+    .college-page .retro-hero {
+        padding-top: 70px;
+    }
+
+    .college-page .hero-slider-container {
+        height: calc(100vh - 70px);
+        min-height: calc(100vh - 70px);
+    }
+}
+
+/* Faculty Page Title Spacing */
+.faculty-page-title {
+    margin-top: 118px;
+    transition: margin-top 0.3s ease;
+}
+
+@media (max-width: 991px) {
+    .faculty-page-title {
+        margin-top: 80px;
+    }
+}
+
+@media (max-width: 576px) {
+    .faculty-page-title {
+        margin-top: 70px;
+    }
+}

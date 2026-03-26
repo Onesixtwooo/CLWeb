@@ -1,0 +1,10 @@
+[2026-03-21 13:59:13] local.INFO: Google Drive Service initialized successfully  
+[2026-03-21 13:59:15] local.INFO: Google Drive Service initialized successfully  
+[2026-03-21 13:59:17] local.INFO: Google Drive Service initialized successfully  
+[2026-03-21 13:59:20] local.INFO: Google Drive Service initialized successfully  
+[2026-03-21 13:59:22] local.INFO: Google Drive Service initialized successfully  
+[2026-03-21 14:02:26] local.INFO: FacebookConfig Store $validated array: {"page_id":"1061969980324250","access_token":"EAAbGLQ9UivMBRFkpTgOSpaxFL2inMZA92pSwluTC29qlcZAYUFYt3ttPrnyt7abLBzmgpZCWgscfNZBLohdvRiKkozw9wdZCwdvMbPdVSQFdCzTtxMeVy5UEFqo4gzL4yuPa5ExwZBU1thWXOmsGMtFjaD4j66TnTofJIeegywPZAIyuUZAmvnGwvRZCJjRMYzKPBMSF6bTQrAXqXmMCrpLZBgq5NPvqOnIttgJEHL9t3arRur6k5qUJlDrWcw2wgZD","fetch_limit":"5","article_category":null,"article_author":"College of Engineering","entity_type":"college","entity_id":"engineering","page_name":"College of Engineering","is_active":false} 
+[2026-03-21 14:03:21] local.INFO: Facebook Webhook Received Payload: {"entry":[{"id":"0","time":1774101800,"changes":[{"field":"feed","value":{"item":"status","post_id":"44444444_444444444","verb":"add","published":1,"created_time":1774101799,"message":"Example post content.","from":{"name":"Test Page","id":"1067280970047460"}}}]}],"object":"page"} 
+[2026-03-21 14:03:21] local.INFO: Facebook posts sync triggered by Webhook.  
+[2026-03-21 14:04:05] local.INFO: Facebook Webhook Received Payload: {"entry":[{"id":"0","time":1774101844,"changes":[{"field":"website"}]}],"object":"page"} 
+[2026-03-21 14:04:05] local.INFO: Facebook posts sync triggered by Webhook.  

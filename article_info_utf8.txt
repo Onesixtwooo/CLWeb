@@ -1,0 +1,8 @@
+﻿ARTICLE_ID: 6
+BANNER: https://drive.google.com/uc?export=view&id=1W7gDZTpd-dr_FJp4NyD1K5cc_RKzlfpV
+IMAGES:
+  - https://drive.google.com/uc?export=view&id=1W7gDZTpd-dr_FJp4NyD1K5cc_RKzlfpV
+  - https://drive.google.com/uc?export=view&id=12MGJcz1-30gKgE7coOxJH7-xJChn39Cn
+  - https://drive.google.com/uc?export=view&id=1Rd6gz5MwlOG9uKOFcQx5ezRtxsQNHklv
+  - https://drive.google.com/uc?export=view&id=1wwTkKdLmQ8THxDB9YYusoQdr56y4TUF3
+  - https://drive.google.com/uc?export=view&id=1HSadaZgje01U0TN6FvBbVOKMz-Hnetf_

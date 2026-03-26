@@ -1,0 +1,167 @@
+@php
+    $collegeName = $collegeName ?? 'College';
+    $collegeSlug = $collegeSlug ?? 'college';
+    $collegeShortName = $collegeShortName ?? 'College';
+    $collegeLogoUrl = $collegeLogoUrl ?? asset('images/colleges/main.webp');
+    $headerColor = !empty($headerColor) && preg_match('/^#[0-9A-Fa-f]{6}$/', $headerColor) ? $headerColor : '#0d6e42';
+    $accentColor = !empty($accentColor) && preg_match('/^#[0-9A-Fa-f]{6}$/', $accentColor) ? $accentColor : '#0d2818';
+    $collegeEmail = $collegeEmail ?? $collegeSlug . '@clsu.edu.ph';
+@endphp
+<!DOCTYPE html>
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<head>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Testimonials - {{ $collegeName }}, {{ config('app.name', 'CLSU') }}">
+    <title>Testimonials - {{ $collegeName }} - {{ config('app.name', 'CLSU') }}</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Buttershine+Serif:wght@400;700&family=Libre+Franklin:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap 5 CSS (CDN) -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+    <!-- Styles -->
+    @include('includes.college-css')
+    <style>
+        .testimonial-card {
+            background: #ffffff;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            height: 100%;
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+        }
+        .testimonial-glow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: {{ $headerColor }};
+        }
+        .testimonial-body {
+            padding: 2.5rem;
+        }
+        .testimonial-quote {
+            font-family: 'Buttershine Serif', serif;
+            font-size: 1.25rem;
+            color: #2d3748;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+        .testimonial-quote::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: -15px;
+            font-size: 4rem;
+            color: rgba(0,0,0,0.05);
+            font-family: serif;
+        }
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .author-photo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #f8f9fa;
+        }
+        .author-info h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.1rem;
+            color: #1a202c;
+        }
+        .author-info p {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body class="retro-modern">
+
+    <!-- Includes: Header -->
+    @include('includes.college-header')
+
+    <main>
+        <!-- Title -->
+        <section class="py-5 mt-5 pt-5" style="background: {{ $headerColor }};">
+            <div class="container text-center py-5">
+                <h1 class="display-3 fw-900 text-white mb-3">Our Voices</h1>
+                <p class="lead text-white-50 mx-auto" style="max-width: 700px; font-size: 1.25rem;">Hear from our students, alumni, and faculty about their journey at the {{ $collegeName }}.</p>
+            </div>
+        </section>
+
+        <!-- Content -->
+        <section class="py-5 bg-white">
+            <div class="container">
+                @if($testimonials->isEmpty())
+                    <div class="text-center py-5 my-5">
+                        <div class="mb-4 opacity-25">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="text-muted">
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="h3 font-weight-bold text-dark mb-3">No testimonials shared yet.</h2>
+                        <p class="text-muted mb-4">We are gathering stories from our community. Check back soon for inspiring journeys.</p>
+                        <a href="{{ route('college.show', $collegeSlug) }}" class="btn rounded-pill px-5 py-3 fw-700 shadow-sm" style="background: {{ $headerColor }}; color: white; border: none;">Back to {{ $collegeShortName }} Home</a>
+                    </div>
+                @else
+                    <div class="row g-4">
+                        @foreach($testimonials as $testimonial)
+                            <div class="col-md-6 col-lg-4">
+                                <div class="testimonial-card">
+                                    <div class="testimonial-glow"></div>
+                                    <div class="testimonial-body">
+                                        <div class="testimonial-quote">
+                                            {!! $testimonial->description !!}
+                                        </div>
+                                        <div class="testimonial-author">
+                                            @if($testimonial->image)
+                                                <img src="{{ asset($testimonial->image) }}" alt="{{ $testimonial->title }}" class="author-photo">
+                                            @else
+                                                <div class="author-photo bg-secondary d-flex align-items-center justify-content-center text-white p-3 fs-5">
+                                                    {{ substr($testimonial->title, 0, 1) }}
+                                                </div>
+                                            @endif
+                                            <div class="author-info">
+                                                <h4>{{ $testimonial->title }}</h4>
+                                                <p>{{ $testimonial->department->name ?? 'CLSU' }}</p>
+                                                @if($testimonial->year_graduated)
+                                                    <p class="small">{{ $testimonial->year_graduated }}</p>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    @include('includes.college-footer')
+
+    <!-- Includes: Scripts -->
+    @include('includes.college-scripts')
+</body>
+</html>
