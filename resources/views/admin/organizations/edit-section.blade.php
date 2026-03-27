@@ -74,7 +74,7 @@
                                     <label class="form-label fw-700">Featured Image</label>
                                     <div class="item-preview-container mb-2 text-center bg-light rounded d-flex align-items-center justify-content-center border" style="width: 100%; height: 250px;" id="split-image-preview">
                                         @if (!empty($content['image']))
-                                            <img src="{{ str_starts_with($content['image'], 'http') || str_starts_with($content['image'], '/') || str_starts_with($content['image'], 'media/') ? asset($content['image']) : asset('/storage/' . $content['image']) }}" class="img-fluid rounded shadow-sm" style="max-height: 100%; object-fit: contain;">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($content['image']) }}" class="img-fluid rounded shadow-sm" style="max-height: 100%; object-fit: contain;">
                                         @else
                                             <i class="bi bi-image text-muted opacity-50 fs-1"></i>
                                         @endif
@@ -137,7 +137,7 @@
                         <i class="bi bi-person text-muted opacity-50 fs-2 item-placeholder"></i>
                     </div>
                     <input type="hidden" name="items[__INDEX__][image]" class="item-image-input">
-                    <button type="button" class="btn btn-outline-primary btn-xs select-media w-100" style="font-size: 0.75rem;">Select</button>
+                    <input type="file" name="items[__INDEX__][image_upload]" class="form-control form-control-sm" accept="image/*">
                 </div>
                 <div class="col-md-5">
                     <label class="form-label small fw-700">Full Name</label>
@@ -172,7 +172,7 @@
                         <i class="bi bi-image text-muted opacity-50 fs-1 item-placeholder"></i>
                     </div>
                     <input type="hidden" name="items[__INDEX__][image]" class="item-image-input">
-                    <button type="button" class="btn btn-outline-primary btn-xs select-media w-100" style="font-size: 0.75rem;">Select Image</button>
+                    <input type="file" name="items[__INDEX__][image_upload]" class="form-control form-control-sm" accept="image/*">
                 </div>
                 <div class="col-md-9">
                     <div class="row g-3">
@@ -208,16 +208,13 @@
             </div>
             <div class="card-body p-2">
                 <input type="hidden" name="items[__INDEX__][image]" class="item-image-input">
-                <button type="button" class="btn btn-outline-primary btn-xs select-media w-100 mb-2" style="font-size: 0.75rem;">Select Photo</button>
+                <input type="file" name="items[__INDEX__][image_upload]" class="form-control form-control-sm mb-2" accept="image/*">
                 <input type="text" name="items[__INDEX__][caption]" class="form-control form-control-sm rounded-2" placeholder="Caption">
             </div>
         </div>
     </div>
 </template>
 @endif
-
-<!-- Media Library Modal -->
-@include('includes.media-modal')
 
 @endsection
 
@@ -283,7 +280,7 @@
                                         <i class="bi ${isProject ? 'bi-kanban' : (layout === 'highlights' ? 'bi-star' : 'bi-person')} text-muted opacity-50 fs-2 item-placeholder"></i>
                                     </div>
                                     <input type="hidden" name="items[${index}][image]" class="item-image-input">
-                                    <button type="button" class="btn btn-outline-primary btn-xs select-media w-100" style="font-size: 0.75rem;">Select</button>
+                                    <input type="file" name="items[${index}][image_upload]" class="form-control form-control-sm" accept="image/*">
                                 </div>
                                 <div class="${isGallerySection ? 'col-md-10' : 'col-md-5'}">
                                     <label class="form-label small fw-700">${isProject ? 'Project Title' : (isGallerySection ? 'Title / Caption' : (layout === 'highlights' ? 'Title' : (layout === 'testimonials' ? 'Name' : 'Full Name')))}</label>
@@ -341,18 +338,22 @@
                     }
                 }
                 
-                if (e.target.closest('.select-media')) {
-                    const row = e.target.closest('.item-row');
+                const uploadInput = e.target.closest('input[type="file"]');
+                if (uploadInput) {
+                    const row = uploadInput.closest('.item-row');
                     const input = row.querySelector('.item-image-input');
                     const preview = row.querySelector('.item-preview-container');
-                    
-                    if (typeof showMediaModal === 'function') {
-                        showMediaModal(function(path, url) {
-                            const displayUrl = url || (path.startsWith('/') ? path : '/' + path);
-                            input.value = displayUrl;
-                            preview.innerHTML = `<img src="${displayUrl}" class="item-preview img-fluid h-100 w-100 object-fit-cover shadow-sm rounded">`;
-                        });
+                    const file = uploadInput.files && uploadInput.files[0];
+
+                    if (!file) {
+                        return;
                     }
+
+                    if (input) {
+                        input.value = '';
+                    }
+
+                    preview.innerHTML = `<img src="${URL.createObjectURL(file)}" class="item-preview img-fluid h-100 w-100 object-fit-cover shadow-sm rounded">`;
                 }
             });
         }

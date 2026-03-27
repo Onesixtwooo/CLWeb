@@ -64,7 +64,6 @@ class MembershipController extends Controller
             'department_id' => ['nullable', 'exists:college_departments,id'],
             'valid_until' => ['nullable', 'date'],
             'logo' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'college_slug' => ['nullable', 'string', 'max:80'],
             'is_visible' => ['nullable', 'boolean'],
@@ -89,8 +88,6 @@ class MembershipController extends Controller
             $filename = time() . '_' . Str::slug($data['organization']) . '.' . $file->getClientOriginalExtension();
             $path = Storage::disk('google')->putFileAs('membership', $file, $filename);
             $data['logo'] = Storage::disk('google')->url($path);
-        } elseif ($request->filled('media_image')) {
-            $data['logo'] = $request->input('media_image');
         }
 
         CollegeMembership::create($data);
@@ -157,7 +154,6 @@ class MembershipController extends Controller
             'department_id' => ['nullable', 'exists:college_departments,id'],
             'valid_until' => ['nullable', 'date'],
             'logo' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_visible' => ['nullable', 'boolean'],
             'return_department' => ['nullable', 'string', 'max:255'],
@@ -175,9 +171,6 @@ class MembershipController extends Controller
             $filename = time() . '_' . Str::slug($data['organization']) . '.' . $file->getClientOriginalExtension();
             $path = Storage::disk('google')->putFileAs('membership', $file, $filename);
             $data['logo'] = Storage::disk('google')->url($path);
-        } elseif ($request->filled('media_image')) {
-            // If using media library, we don't automatically delete the old file since it might be from media library too
-            $data['logo'] = $request->input('media_image');
         }
 
         $membership->update($data);

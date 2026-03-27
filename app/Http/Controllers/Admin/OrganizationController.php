@@ -81,7 +81,6 @@ class OrganizationController extends Controller
             'department_id' => ['nullable', 'exists:college_departments,id'],
             'adviser' => ['nullable', 'string', 'max:255'],
             'logo' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'college_slug' => ['nullable', 'string', 'max:80'],
@@ -120,8 +119,6 @@ class OrganizationController extends Controller
             $collegeLogoPath = $data['college_slug'] ?? 'global';
             $path       = Storage::disk('google')->putFileAs("colleges/{$collegeLogoPath}/student-organization/{$folderName}/logos", $file, $filename);
             $data['logo'] = Storage::disk('google')->url($path);
-        } elseif ($request->filled('media_image')) {
-            $data['logo'] = $request->input('media_image');
         }
 
         CollegeOrganization::create($data);
@@ -385,7 +382,12 @@ class OrganizationController extends Controller
         }
 
         if (isset($data['items'])) {
-            $sectionData['items'] = $data['items'];
+            $sectionData['items'] = $this->mergeUploadedSectionItemImages(
+                $organization,
+                $section,
+                $data['items'],
+                $request->file('items', [])
+            );
         }
         
         if ($section === 'overview') {
@@ -397,9 +399,19 @@ class OrganizationController extends Controller
                 $organization->adviser = $request->input('adviser');
             }
         } elseif ($section === 'activities') {
-            $sectionData['items'] = $data['items'] ?? [];
+            $sectionData['items'] = $this->mergeUploadedSectionItemImages(
+                $organization,
+                $section,
+                $data['items'] ?? [],
+                $request->file('items', [])
+            );
         } elseif ($section === 'gallery') {
-            $sectionData['items'] = $data['items'] ?? [];
+            $sectionData['items'] = $this->mergeUploadedSectionItemImages(
+                $organization,
+                $section,
+                $data['items'] ?? [],
+                $request->file('items', [])
+            );
         } else {
             // Custom sections use simple body
             $sectionData['body'] = $data['body'] ?? '';
@@ -458,7 +470,6 @@ class OrganizationController extends Controller
             'department_id' => ['nullable', 'exists:college_departments,id'],
             'adviser' => ['nullable', 'string', 'max:255'],
             'logo' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'is_visible' => ['nullable', 'boolean'],
@@ -489,8 +500,6 @@ class OrganizationController extends Controller
             $collegeLogoPath = $organization->college_slug ?: 'global';
             $path       = Storage::disk('google')->putFileAs("colleges/{$collegeLogoPath}/student-organization/{$folderName}/logos", $file, $filename);
             $data['logo'] = Storage::disk('google')->url($path);
-        } elseif ($request->filled('media_image')) {
-            $data['logo'] = $request->input('media_image');
         } elseif ($request->input('remove_logo') === '1') {
             $data['logo'] = null;
         }
@@ -1102,6 +1111,31 @@ class OrganizationController extends Controller
         }
 
         return null;
+    }
+
+    protected function mergeUploadedSectionItemImages(
+        CollegeOrganization $organization,
+        string $section,
+        array $items,
+        array $uploadedItems = []
+    ): array {
+        foreach ($uploadedItems as $index => $uploadedItem) {
+            if (! isset($items[$index]) || ! is_array($items[$index]) || ! is_array($uploadedItem)) {
+                continue;
+            }
+
+            if (isset($uploadedItem['image_upload']) && $uploadedItem['image_upload'] instanceof UploadedFile) {
+                $uploadTitle = $items[$index]['title'] ?? $items[$index]['name'] ?? null;
+                $items[$index]['image'] = $this->uploadSectionItemImage(
+                    $organization,
+                    $section,
+                    $uploadedItem['image_upload'],
+                    $uploadTitle
+                );
+            }
+        }
+
+        return $items;
     }
 
     protected function uploadSectionItemImage(CollegeOrganization $organization, string $section, UploadedFile $file, ?string $title = null): ?string

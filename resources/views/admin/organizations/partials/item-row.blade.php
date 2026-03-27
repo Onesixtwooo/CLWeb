@@ -22,13 +22,13 @@
                 </label>
                 <div class="item-preview-container mb-2 text-center bg-light rounded d-flex align-items-center justify-content-center border" style="width: 80px; height: 80px; margin: 0 auto;">
                     @if (!empty($item['image']))
-                        <img src="{{ asset($item['image']) }}" class="item-preview img-fluid" style="max-height: 100%; object-fit: contain;">
+                        <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item['image']) }}" class="item-preview img-fluid" style="max-height: 100%; object-fit: contain;">
                     @else
                         <i class="bi {{ $isProjectSection ? 'bi-kanban' : ($layout === 'highlights' ? 'bi-star' : 'bi-person') }} text-muted opacity-50 fs-2 item-placeholder"></i>
                     @endif
                 </div>
                 <input type="hidden" name="items[{{ $index }}][image]" class="item-image-input" value="{{ $item['image'] ?? '' }}">
-                <button type="button" class="btn btn-outline-primary btn-xs select-media w-100" style="font-size: 0.75rem;">Select</button>
+                <input type="file" name="items[{{ $index }}][image_upload]" class="form-control form-control-sm" accept="image/*">
             </div>
             <div class="{{ $isGallerySection ? 'col-md-10' : 'col-md-5' }}">
                 <label class="form-label small fw-700">

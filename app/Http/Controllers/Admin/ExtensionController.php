@@ -69,7 +69,6 @@ class ExtensionController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string'],
         ]);
 
         $imagePath = null;
@@ -82,8 +81,6 @@ class ExtensionController extends Controller
                 $fileId = app(\App\Services\GoogleDriveService::class)->getFileId($path);
                 $imagePath = 'media/proxy/' . ($fileId ?? $path);
             }
-        } elseif ($request->filled('media_image')) {
-            $imagePath = $request->input('media_image');
         }
 
         $maxSort = CollegeExtension::where('college_slug', $college)->max('sort_order') ?? 0;
@@ -117,7 +114,6 @@ class ExtensionController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -129,8 +125,6 @@ class ExtensionController extends Controller
                 $fileId = app(\App\Services\GoogleDriveService::class)->getFileId($path);
                 $validated['image'] = 'media/proxy/' . ($fileId ?? $path);
             }
-        } elseif ($request->filled('media_image')) {
-            $validated['image'] = $request->input('media_image');
         }
 
         $extension->update($validated);

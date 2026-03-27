@@ -62,8 +62,6 @@ class FacilityController extends Controller
         $data['photo'] = null;
         if ($request->hasFile('photo')) {
             $data['photo'] = $this->storeFacilityPhoto($request->file('photo'), $data['name'], $data['college_slug'] ?? null);
-        } elseif ($request->has('media_images') && !empty($request->media_images[0])) {
-            $data['photo'] = $request->media_images[0];
         }
         Facility::create($data);
 
@@ -113,8 +111,6 @@ class FacilityController extends Controller
             $data['photo'] = null;
         } elseif ($request->hasFile('photo')) {
             $data['photo'] = $this->storeFacilityPhoto($request->file('photo'), $data['name'], $data['college_slug'] ?? $facility->college_slug);
-        } elseif ($request->has('media_images') && !empty($request->media_images[0])) {
-            $data['photo'] = $request->media_images[0];
         } else {
             unset($data['photo']);
         }

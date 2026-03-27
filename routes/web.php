@@ -18,7 +18,6 @@ use App\Http\Controllers\Admin\InstituteController;
 use App\Http\Controllers\Admin\FacultyController;
 use App\Http\Controllers\Admin\MembershipController;
 use App\Http\Controllers\Admin\OrganizationController;
-use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\DepartmentLinkageController;
 use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SettingsController;
@@ -166,12 +165,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('organizations/{college}/{organization}/sections/{section}', [OrganizationController::class, 'showSection'])->name('organizations.show-section');
         Route::get('organizations/{college}/{organization}', [OrganizationController::class, 'show'])->name('organizations.show');
 
-        Route::get('media', [MediaController::class, 'index'])->name('media.index');
-        Route::post('media/upload', [MediaController::class, 'upload'])->name('media.upload');
-        Route::get('media/api', [MediaController::class, 'apiIndex'])->name('media.api.index');
-        Route::post('media/api/upload', [MediaController::class, 'apiUpload'])->name('media.api.upload');
-        Route::delete('media/delete', [MediaController::class, 'destroy'])->name('media.destroy');
-        Route::get('media/proxy/{fileId}', [MediaController::class, 'proxy'])->where('fileId', '[a-zA-Z0-9\-_]+')->name('media.proxy');
         Route::get('settings', [SettingsController::class, 'index'])->name('settings.index');
         Route::post('settings/appearance', [SettingsController::class, 'updateAppearance'])->name('settings.appearance.update');
         Route::post('settings/google-drive', [SettingsController::class, 'updateGoogleDrive'])->name('settings.google-drive.update');

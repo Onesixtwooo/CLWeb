@@ -102,7 +102,6 @@ class ScholarshipController extends Controller
             'process' => ['nullable', 'string'],
             'benefits' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string'],
         ]);
 
         $user = $request->user();
@@ -114,11 +113,6 @@ class ScholarshipController extends Controller
             $imagePath = \Illuminate\Support\Facades\Storage::disk('google')->putFileAs('scholarships/' . Str::slug($validated['title']), $file, $filename);
             if ($imagePath) {
                 $imagePath = \Illuminate\Support\Facades\Storage::disk('google')->url($imagePath);
-            }
-        } elseif ($request->filled('media_image')) {
-            $cleanPath = ltrim($request->input('media_image'), '/');
-            if (\Illuminate\Support\Facades\Storage::disk('google')->exists($cleanPath)) {
-                $imagePath = \Illuminate\Support\Facades\Storage::disk('google')->url($cleanPath);
             }
         }
 
@@ -181,7 +175,6 @@ class ScholarshipController extends Controller
             'process' => ['nullable', 'string'],
             'benefits' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -198,13 +191,6 @@ class ScholarshipController extends Controller
             $imagePath = \Illuminate\Support\Facades\Storage::disk('google')->putFileAs('scholarships/' . Str::slug($scholarship->title), $file, $filename);
             if ($imagePath) {
                 $validated['image'] = \Illuminate\Support\Facades\Storage::disk('google')->url($imagePath);
-            }
-        } elseif ($request->filled('media_image')) {
-            $cleanPath = ltrim($request->input('media_image'), '/');
-            if (\Illuminate\Support\Facades\Storage::disk('google')->exists($cleanPath)) {
-                $validated['image'] = \Illuminate\Support\Facades\Storage::disk('google')->url($cleanPath);
-            } else {
-                unset($validated['image']);
             }
         } else {
             unset($validated['image']); // Keep existing

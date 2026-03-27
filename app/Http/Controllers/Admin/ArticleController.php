@@ -144,8 +144,6 @@ class ArticleController extends Controller
             'author' => ['nullable', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],
             'college_slug' => ['nullable', 'string', 'max:80'],
-            'media_images' => ['nullable', 'array'],
-            'media_images.*' => ['string'],
         ]);
 
         $user = $request->user();
@@ -181,17 +179,6 @@ class ArticleController extends Controller
             }
         }
 
-        // Handle media library selections
-        if ($request->filled('media_images')) {
-            foreach ($request->input('media_images') as $mediaPath) {
-                // Sanitize and verify the file exists on Google Drive
-                $cleanPath = ltrim($mediaPath, '/');
-                if (\Illuminate\Support\Facades\Storage::disk('google')->exists($cleanPath)) {
-                    $newImagePaths[] = \Illuminate\Support\Facades\Storage::disk('google')->url($cleanPath);
-                }
-            }
-        }
-        
         $allImages = array_merge($currentImages, $newImagePaths);
         
         $validated['images'] = $allImages;

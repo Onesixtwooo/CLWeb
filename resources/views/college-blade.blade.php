@@ -19,26 +19,11 @@
     <!-- Includes: CSS & Fonts -->
     @include('includes.college-css')
     <style>
-        .explore-slider-arrow {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 42px;
-            height: 42px;
-            border-radius: 50%;
-            border: none;
-            background: {{ $headerColor }};
-            color: #ffffff;
-            font-size: 1.5rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        .explore-grid {
             display: grid;
-            place-items: center;
-            cursor: pointer;
-            z-index: 2;
-            transition: all 0.3s ease;
-        }
-        .explore-slider-arrow:hover {
-            opacity: 0.9;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            align-items: stretch;
         }
 
         /* About Section Carousel Styles */
@@ -209,26 +194,8 @@
         @media (max-width: 767.98px) {
             /* Removed .about-header responsive layout definitions */
 
-            /* Disable sliding animation for facilities carousel on mobile */
-            .explore-slider {
-                overflow: visible;
-            }
-            .explore-slider-track {
-                display: flex !important;
-                flex-wrap: wrap;
-                justify-content: center;
-                gap: 1rem;
-                scroll-snap-type: none !important;
-                transform: none !important;
-                transition: none !important;
-            }
-            .explore-slider-track .program-card {
-                min-width: auto !important;
-                width: calc(100% - 2rem) !important;
-                max-width: 420px;
-            }
-            .explore-slider-arrow {
-                display: none !important;
+            .explore-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -505,26 +472,22 @@
                 <p class="retro-section-text text-center mx-auto">{{ !empty($facilitiesSection->body) ? strip_tags($facilitiesSection->body) : 'Specialized spaces that support instruction, research, and practical training.' }}</p>
             </div>
 
-            <div class="explore-slider">
-                <div class="explore-slider-track" id="exploreSliderTrack">
-                    @foreach ($facilities as $facility)
-                        @php
-                            $facilityImage = \App\Providers\AppServiceProvider::resolveLogoUrl($facility->photo ?: $collegeLogoUrl);
-                        @endphp
-                        <div class="program-card retro-card">
-                            <div class="program-card-overlay" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ $facilityImage }}'); background-size: cover; background-position: center;"></div>
-                            <div class="retro-card-border"></div>
-                            <h3 class="retro-card-title" style="position: relative; z-index: 2; color: #fff;">
-                                <a href="{{ route('college.facility.show', ['college' => $collegeSlug, 'facility' => $facility]) }}" style="color: #fff; text-decoration: none;" class="stretched-link">
-                                    {{ $facility->name }}
-                                </a>
-                            </h3>
-                            <p class="retro-card-text" style="position: relative; z-index: 2; color: #f0f0f0;">{{ Str::limit(strip_tags($facility->description ?? ''), 150) ?: 'Explore this facility to learn more about its resources and capabilities.' }}</p>
-                        </div>
-                    @endforeach
-                </div>
-                <button class="explore-slider-arrow explore-prev" id="explorePrev">‹</button>
-                <button class="explore-slider-arrow explore-next" id="exploreNext">›</button>
+            <div class="explore-grid">
+                @foreach ($facilities as $facility)
+                    @php
+                        $facilityImage = \App\Providers\AppServiceProvider::resolveLogoUrl($facility->photo ?: $collegeLogoUrl);
+                    @endphp
+                    <div class="program-card retro-card">
+                        <div class="program-card-overlay" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ $facilityImage }}'); background-size: cover; background-position: center;"></div>
+                        <div class="retro-card-border"></div>
+                        <h3 class="retro-card-title" style="position: relative; z-index: 2; color: #fff;">
+                            <a href="{{ route('college.facility.show', ['college' => $collegeSlug, 'facility' => $facility]) }}" style="color: #fff; text-decoration: none;" class="stretched-link">
+                                {{ $facility->name }}
+                            </a>
+                        </h3>
+                        <p class="retro-card-text" style="position: relative; z-index: 2; color: #f0f0f0;">{{ Str::limit(strip_tags($facility->description ?? ''), 150) ?: 'Explore this facility to learn more about its resources and capabilities.' }}</p>
+                    </div>
+                @endforeach
             </div>
         </div>
     </section>

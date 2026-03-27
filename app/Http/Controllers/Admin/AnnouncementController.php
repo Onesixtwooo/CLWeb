@@ -55,8 +55,6 @@ class AnnouncementController extends Controller
             'college_slug' => ['nullable', 'string', 'max:80'],
             'banner' => ['nullable', 'array'],
             'banner.*' => ['nullable', 'image', 'max:5120'],
-            'media_images' => ['nullable', 'array'],
-            'media_images.*' => ['nullable', 'string'],
             'banner_dark' => ['nullable', 'boolean'],
         ]);
         $user = $request->user();
@@ -72,17 +70,8 @@ class AnnouncementController extends Controller
         }
         $data['user_id'] = $user->id;
 
-        // Process images
+        // Process direct uploads
         $allImages = [];
-        // 1. Files from media library
-        if ($request->filled('media_images')) {
-            foreach ($request->input('media_images') as $path) {
-                if (\Illuminate\Support\Facades\Storage::disk('google')->exists($path)) {
-                    $allImages[] = \Illuminate\Support\Facades\Storage::disk('google')->url($path);
-                }
-            }
-        }
-        // 2. Direct uploads
         if ($request->hasFile('banner')) {
             foreach ($request->file('banner') as $file) {
                 $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
@@ -123,8 +112,6 @@ class AnnouncementController extends Controller
             'college_slug' => ['nullable', 'string', 'max:80'],
             'banner' => ['nullable', 'array'],
             'banner.*' => ['nullable', 'image', 'max:5120'],
-            'media_images' => ['nullable', 'array'],
-            'media_images.*' => ['nullable', 'string'],
             'banner_dark' => ['nullable', 'boolean'],
             'clear_images' => ['nullable', 'boolean'],
         ]);
@@ -141,15 +128,6 @@ class AnnouncementController extends Controller
         }
 
         $newImages = [];
-        // 1. Files from media library
-        if ($request->filled('media_images')) {
-            foreach ($request->input('media_images') as $path) {
-                if (\Illuminate\Support\Facades\Storage::disk('google')->exists($path)) {
-                    $newImages[] = \Illuminate\Support\Facades\Storage::disk('google')->url($path);
-                }
-            }
-        }
-        // 2. Direct uploads
         if ($request->hasFile('banner')) {
             foreach ($request->file('banner') as $file) {
                 $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);

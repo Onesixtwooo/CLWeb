@@ -70,25 +70,8 @@
                     </div>
                     <div class="col-md-6">
                         <label for="banner" class="form-label">Banner Images (Select 5+ for slideshow)</label>
-                        
-                        {{-- Media picker selected images --}}
-                        <div id="mediaPickerSelected" style="display: none;">
-                            <label class="form-label small text-muted">Selected from Media Library:</label>
-                            <div class="mp-selected-previews" id="mediaPickerPreviews"></div>
-                        </div>
-
-                        {{-- Hidden inputs for media picker selections --}}
-                        <div id="mediaPickerInputs"></div>
-
-                        <div class="d-flex gap-2 mt-2">
-                            <button type="button" class="btn btn-outline-secondary btn-sm" id="openMediaPicker">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -2px; margin-right: 4px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                Media Library
-                            </button>
-                            <span class="text-muted small d-flex align-items-center">or upload directly:</span>
-                            <input type="file" name="banner[]" id="banner" class="form-control form-control-sm" accept="image/*" multiple style="max-width: 300px;">
-                        </div>
-                        <div class="form-text">First image is used as main banner. Use Media Library to pick existing images, or upload new ones.</div>
+                        <input type="file" name="banner[]" id="banner" class="form-control form-control-sm mt-2" accept="image/*" multiple>
+                        <div class="form-text">First image is used as main banner. Upload one or more images directly.</div>
                         @error('banner')
                             <div class="invalid-feedback d-block">{{ $message }}</div>
                         @enderror
@@ -112,7 +95,6 @@
             </form>
         </div>
     </div>
-    @include('partials.media-picker')
     <script>
         document.getElementById('articleForm').addEventListener('submit', function(e) {
             if (this.checkValidity()) {

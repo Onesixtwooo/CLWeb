@@ -422,7 +422,6 @@
     </div>
 @endsection
 
-@include('includes.media-modal')
 @push('scripts')
 
 <script>
@@ -668,21 +667,6 @@
                 </div>
             `;
             previewContainer.appendChild(div);
-        });
-    }
-
-    const itemModalSelectBtn = document.getElementById('item-modal-select-btn');
-    if (itemModalSelectBtn) {
-        itemModalSelectBtn.addEventListener('click', function() {
-            if (typeof showMediaModal === 'function') {
-                let defaultFolder = currentSection === 'gallery' ? 'images/gallery' : '';
-                showMediaModal(function(path, url) {
-                    const displayUrl = url || (path.startsWith('/') ? path : '/' + path);
-                    document.getElementById('item-modal-upload').value = '';
-                    document.getElementById('item-modal-image').value = displayUrl;
-                    document.getElementById('item-modal-preview').innerHTML = `<img src="${displayUrl}" class="img-fluid rounded h-100 w-100 object-fit-cover">`;
-                }, false, defaultFolder);
-            }
         });
     }
 

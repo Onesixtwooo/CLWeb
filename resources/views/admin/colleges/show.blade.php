@@ -464,7 +464,7 @@
                             @php
                                 preg_match('/[?&]id=([^&]+)/', $collegeModel->icon, $_iconM);
                                 $_iconSrc = isset($_iconM[1])
-                                    ? route('admin.media.proxy', ['fileId' => $_iconM[1]])
+                                    ? route('media.proxy.public', ['fileId' => $_iconM[1]])
                                     : asset($collegeModel->icon);
                             @endphp
                             <img src="{{ $_iconSrc }}" alt="{{ $collegeName }} icon" style="max-width: 120px; max-height: 120px; object-fit: contain;" class="rounded">
@@ -525,7 +525,7 @@
                                     <div id="admin-logo-zone" class="border rounded-3 bg-light d-flex align-items-center justify-content-center text-muted position-relative overflow-hidden"
                                          style="width: 120px; height: 120px; cursor: pointer;">
                                         <img id="admin-logo-preview"
-                                             src="@if(!empty($content['adminLogoPath']))@php preg_match('/[?&]id=([^&]+)/', $content['adminLogoPath'], $_lm); echo isset($_lm[1]) ? route('admin.media.proxy', ['fileId' => $_lm[1]]) : asset($content['adminLogoPath']); @endphp@endif"
+                                             src="@if(!empty($content['adminLogoPath']))@php preg_match('/[?&]id=([^&]+)/', $content['adminLogoPath'], $_lm); echo isset($_lm[1]) ? route('media.proxy.public', ['fileId' => $_lm[1]]) : asset($content['adminLogoPath']); @endphp@endif"
                                              alt="Logo preview"
                                              class="w-100 h-100 position-absolute top-0 start-0 {{ !empty($content['adminLogoPath']) ? '' : 'd-none' }}"
                                              style="object-fit: cover;">

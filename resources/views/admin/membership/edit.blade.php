@@ -159,27 +159,10 @@
     </div>
 </div>
 
-<!-- Media Library Modal -->
-
-
 @endsection
 
 @push('scripts')
 <script>
-    function openMediaLibrary() {
-        if (typeof showMediaModal === 'function') {
-            showMediaModal(function(path) {
-                document.getElementById('media_image_input').value = path.startsWith('/') ? path.substring(1) : path;
-                document.getElementById('logo_input').value = ''; // Clear local file input
-                
-                const preview = document.getElementById('logo-preview');
-                const container = document.getElementById('logo-preview-container');
-                preview.src = path.startsWith('/') ? path : '/' + path;
-                container.classList.remove('d-none');
-            });
-        }
-    }
-
     function previewLocalImage(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
@@ -188,7 +171,6 @@
                 const container = document.getElementById('logo-preview-container');
                 preview.src = e.target.result;
                 container.classList.remove('d-none');
-                document.getElementById('media_image_input').value = ''; // Clear media library input
             }
             reader.readAsDataURL(input.files[0]);
         }
@@ -198,7 +180,6 @@
         document.getElementById('logo-preview').src = '#';
         document.getElementById('logo-preview-container').classList.add('d-none');
         document.getElementById('logo_input').value = '';
-        document.getElementById('media_image_input').value = '';
     }
 </script>
 @endpush

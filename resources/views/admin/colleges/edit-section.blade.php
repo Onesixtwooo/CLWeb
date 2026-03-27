@@ -266,7 +266,7 @@
                                             @php
                                                 preg_match('/[?&]id=([^&]+)/', $collegeModel->icon, $_esIconM);
                                                 $_esIconSrc = isset($_esIconM[1])
-                                                    ? route('admin.media.proxy', ['fileId' => $_esIconM[1]])
+                                                    ? route('media.proxy.public', ['fileId' => $_esIconM[1]])
                                                     : $collegeModel->icon;
                                             @endphp
                                             <img src="{{ $_esIconSrc }}" alt="Current icon" style="max-width: 100px; max-height: 100px; object-fit: contain;" class="rounded">
@@ -306,7 +306,7 @@
                                                         @php
                                                             preg_match('/[?&]id=([^&]+)/', $imageUrl, $_aboutImageM);
                                                             $_aboutImageSrc = isset($_aboutImageM[1])
-                                                                ? route('admin.media.proxy', ['fileId' => $_aboutImageM[1]])
+                                                                ? route('media.proxy.public', ['fileId' => $_aboutImageM[1]])
                                                                 : $imageUrl;
                                                         @endphp
                                                         <img src="{{ $_aboutImageSrc }}" alt="About image {{ $index + 1 }}" class="img-fluid rounded shadow-sm" style="width: 100%; height: 150px; object-fit: cover;">

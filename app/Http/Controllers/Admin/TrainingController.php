@@ -118,14 +118,11 @@ class TrainingController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string'],
         ]);
 
         $imagePath = null;
         if ($request->hasFile('image')) {
             $imagePath = $this->storeTrainingImage($request, $college, $validated['title']);
-        } elseif ($request->filled('media_image')) {
-            $imagePath = $request->input('media_image');
         }
 
         $maxSort = CollegeTraining::where('college_slug', $college)->max('sort_order') ?? 0;
@@ -161,7 +158,6 @@ class TrainingController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'description' => ['nullable', 'string'],
             'image' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string'],
         ]);
 
         if ($request->hasFile('image')) {
@@ -171,12 +167,6 @@ class TrainingController extends Controller
                 $newFolder = $this->managedTrainingFolder($validated['image']);
                 $deleteParentFolder = $oldFolder !== null && $oldFolder !== $newFolder;
                 $this->deleteTrainingAsset($oldImage, $deleteParentFolder);
-            }
-        } elseif ($request->filled('media_image')) {
-            $validated['image'] = $request->input('media_image');
-
-            if ($oldImage && $oldImage !== $validated['image']) {
-                $this->deleteTrainingAsset($oldImage, $oldFolder !== null);
             }
         }
 

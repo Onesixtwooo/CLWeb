@@ -126,7 +126,6 @@ class AccreditationController extends Controller
             'program_id' => ['nullable', 'exists:department_programs,id'],
             'valid_until' => ['nullable', 'date'],
             'logo' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'college_slug' => ['nullable', 'string', 'max:80'],
             'is_visible' => ['nullable', 'boolean'],
@@ -147,8 +146,6 @@ class AccreditationController extends Controller
 
         if ($request->hasFile('logo')) {
             $data['logo'] = $this->storeAccreditationLogo($request, $data['college_slug'], $data['agency'], $departmentSlug);
-        } elseif ($request->filled('media_image')) {
-            $data['logo'] = $request->input('media_image');
         }
 
         CollegeAccreditation::create($data);
@@ -185,7 +182,6 @@ class AccreditationController extends Controller
             'program_id' => ['nullable', 'exists:department_programs,id'],
             'valid_until' => ['nullable', 'date'],
             'logo' => ['nullable', 'image', 'max:2048'],
-            'media_image' => ['nullable', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
             'college_slug' => ['nullable', 'string', 'max:80'],
             'is_visible' => ['nullable', 'boolean'],
@@ -210,11 +206,6 @@ class AccreditationController extends Controller
                 $newFolder = $this->managedAccreditationFolder($data['logo'], $data['college_slug'], $departmentSlug);
                 $this->deleteAccreditationLogo($oldLogo, $oldFolder !== $newFolder ? $oldFolder : null);
             }
-        } elseif ($request->filled('media_image')) {
-            if ($oldLogo && $oldLogo !== $request->input('media_image')) {
-                $this->deleteAccreditationLogo($oldLogo, $oldFolder);
-            }
-            $data['logo'] = $request->input('media_image');
         }
 
         $accreditation->update($data);
