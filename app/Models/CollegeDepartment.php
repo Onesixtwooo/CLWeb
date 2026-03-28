@@ -31,6 +31,7 @@ class CollegeDepartment extends Model
         'social_other',
         'overview_title',
         'overview_body',
+        'overview_is_visible',
         'faculty_title',
         'faculty_body',
         'faculty_is_visible',
@@ -70,6 +71,7 @@ class CollegeDepartment extends Model
 
     protected $casts = [
         'banner_images' => 'array',
+        'overview_is_visible' => 'boolean',
         'faculty_is_visible' => 'boolean',
         'awards_is_visible' => 'boolean',
         'objectives_is_visible' => 'boolean',
@@ -191,6 +193,7 @@ class CollegeDepartment extends Model
             return [
                 'title' => $this->overview_title ?? 'Overview',
                 'body' => $this->overview_body ?? '',
+                'is_visible' => (bool) ($this->overview_is_visible ?? true),
                 'program_description' => $this->program_description,
                 'graduate_outcomes' => $this->graduate_outcomes,
                 'graduate_outcomes_title' => $this->graduate_outcomes_title,
@@ -340,6 +343,7 @@ class CollegeDepartment extends Model
              $this->social_other = $content['social_other'] ?? null;
              $this->overview_title = $content['title'] ?? 'Overview';
              $this->overview_body = $content['body'] ?? null;
+             $this->overview_is_visible = $content['is_visible'] ?? true;
              $this->email = $content['email'] ?? null;
              $this->phone = $content['phone'] ?? null;
              return;

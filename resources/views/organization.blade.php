@@ -238,7 +238,7 @@
                     <div class="logo-text d-flex flex-column">
                         <h2 class="retro-heading mb-0">
                             <span class="logo-full-text d-none d-md-inline">{{ strtoupper($collegeName) }}</span>
-                            <span class="logo-short-text d-inline d-md-none">{{ $collegeShortName ?? '' }}</span>
+                            <span class="logo-short-text d-inline d-md-none">{{ strtoupper($collegeName) }}</span>
                         </h2>
                         <p class="retro-subtitle">
                             <span class="d-none d-md-inline">{{ $department?->name ?? $collegeName }}</span>

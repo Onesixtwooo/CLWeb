@@ -404,6 +404,20 @@
                 @endif
 
                 <div class="colleges-detail-body">
+                    @if ($currentSection === 'overview')
+                        @php
+                            $isVisible = $sectionContent['is_visible'] ?? true;
+                        @endphp
+
+                        <div class="mb-3">
+                            @if($isVisible)
+                                <span class="badge bg-success">Visible on Public Page</span>
+                            @else
+                                <span class="badge bg-secondary">Hidden from Public Page</span>
+                            @endif
+                        </div>
+                    @endif
+
                     @if ($currentSection === 'faculty')
                         @php
                             $isVisible = $sectionContent['is_visible'] ?? true;

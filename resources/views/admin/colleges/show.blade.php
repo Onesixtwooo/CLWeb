@@ -479,7 +479,7 @@
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                     <h2 class="colleges-detail-title mb-0">{{ $content['title'] }}</h2>
                     @if ($currentSection !== 'departments' && $currentSection !== 'explore' && $currentSection !== 'facilities' && $currentSection !== 'contact' && $currentSection !== 'training' && $currentSection !== 'downloads')
-                        <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => $currentSection]) }}{{ $currentSection === 'overview' ? '?edit=overview' : '' }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit section details</span></a>
+                        <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => $currentSection]) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit section details</span></a>
                     @elseif ($currentSection === 'departments' || $currentSection === 'explore' || $currentSection === 'facilities' || $currentSection === 'extension' || $currentSection === 'training' || $currentSection === 'downloads' || $currentSection === 'faq' || $currentSection === 'scholarships')
                         <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => $currentSection]) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit section details</span></a>
                     @endif
@@ -1045,7 +1045,7 @@
                             $retroCount = $retroList->count();
                         @endphp
                         @if ($retroCount < 4)
-                            <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'overview']) }}?edit=retro&action=create" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Add Item</span></a>
+                            <a href="{{ route('admin.colleges.create-retro', ['college' => $collegeSlug]) }}" class="btn btn-primary btn-sm"><i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Add Item</span></a>
                         @else
                             <button class="btn btn-secondary btn-sm" disabled title="Maximum 4 items reached.">Max items reached</button>
                         @endif
@@ -1071,7 +1071,7 @@
                                         <p class="card-text small text-muted">{{ \Illuminate\Support\Str::limit(strip_tags($retro->description), 100) }}</p>
                                     </div>
                                     <div class="card-footer bg-transparent border-top-0 d-flex justify-content-end gap-2">
-                                         <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'overview']) }}?edit=retro&retro_key={{ urlencode(\Illuminate\Support\Facades\Crypt::encryptString($collegeSlug . ':' . $retro->id)) }}" class="btn btn-outline-primary btn-sm">Edit</a>
+                                         <a href="{{ route('admin.colleges.edit-retro', ['college' => $collegeSlug, 'retro' => $retro->id]) }}" class="btn btn-outline-primary btn-sm">Edit</a>
                                          <form action="{{ route('admin.colleges.update-section', ['college' => $collegeSlug, 'section' => 'overview']) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this retro item?');">
                                             @csrf
                                             @method('PUT')
@@ -1088,7 +1088,7 @@
                         <div class="colleges-detail-body">
                              <p class="text-muted mb-0">No retro items found.</p>
                              @if ($retroList->count() < 4)
-                                 <p class="mt-2"><a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'overview']) }}?edit=retro&action=create" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Create your first item</span></a></p>
+                                 <p class="mt-2"><a href="{{ route('admin.colleges.create-retro', ['college' => $collegeSlug]) }}" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Create your first item</span></a></p>
                              @endif
                         </div>
                     @endif
@@ -1100,7 +1100,7 @@
                 <div class="colleges-detail mt-4">
                     <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                         <h2 class="colleges-detail-title mb-0">Featured Video</h2>
-                        <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'overview']) }}?edit=featured_video" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit video</span></a>
+                        <a href="{{ route('admin.colleges.edit-featured-video', ['college' => $collegeSlug]) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit video</span></a>
                     </div>
                     <div class="colleges-detail-body">
                         @if ($videoData && $videoData->video_type && ($videoData->video_url || $videoData->video_file))
@@ -1155,7 +1155,7 @@
                                 </div>
                             @endif
                         @else
-                            <p class="text-muted mb-0">No featured video yet. <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'overview']) }}?edit=featured_video">Add a video</a>.</p>
+                            <p class="text-muted mb-0">No featured video yet. <a href="{{ route('admin.colleges.edit-featured-video', ['college' => $collegeSlug]) }}">Add a video</a>.</p>
                         @endif
                     </div>
                 </div>

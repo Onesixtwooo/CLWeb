@@ -29,10 +29,10 @@
     @include('includes.college-css')
     <style>
         .faculty-card {
-            background: var(--college-header); /* Body colored based on header */
-            border-radius: 12px;
+            background: #ffffff;
+            border-radius: 0;
             overflow: hidden;
-            border: 0;
+            border: 1px solid color-mix(in srgb, {{ $headerColor }} 14%, #e2e8f0 86%);
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             transition: transform 0.2s, box-shadow 0.2s;
             display: flex;
@@ -44,19 +44,18 @@
         }
         .faculty-card-photo-wrap {
             background: #ffffff;
-            padding: 2rem 1rem;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            width: 100%;
+            border-bottom: 1px solid color-mix(in srgb, {{ $headerColor }} 18%, #e2e8f0 82%);
         }
         .faculty-card-photo {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
+            width: 100%;
+            height: 220px;
+            border-radius: 0;
             object-fit: cover;
-            border: 4px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 0;
+            box-shadow: none;
             background-color: #f3f4f6;
+            display: block;
         }
         .faculty-card-body { 
             padding: 1.5rem; 
@@ -64,6 +63,12 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            background: linear-gradient(
+                180deg,
+                color-mix(in srgb, {{ $headerColor }} 92%, #ffffff 8%) 0%,
+                color-mix(in srgb, {{ $headerColor }} 78%, #0f172a 22%) 100%
+            );
+            border-top: 1px solid color-mix(in srgb, {{ $headerColor }} 24%, #ffffff 76%);
             text-align: center; /* Center text matches the reference roughly, or keep left? Reference has centered photo but left text. Let's try mixed. */
             text-align: left; /* Reset to left based on reference image text alignment */
         }
@@ -99,6 +104,39 @@
         .faculty-card-email a:hover { 
             color: #ffffff; 
             text-decoration: underline; 
+        }
+        @media (max-width: 767.98px) {
+            .faculty-page-title {
+                padding-top: 1.5rem !important;
+                padding-bottom: 1.5rem !important;
+            }
+            .faculty-page-title .retro-section-title {
+                font-size: clamp(2.1rem, 10vw, 3rem);
+                line-height: 0.95;
+            }
+            .faculty-page-title .text-white {
+                max-width: 18rem;
+            }
+            .faculty-group-header {
+                align-items: flex-start !important;
+                flex-wrap: wrap;
+                gap: 0.75rem !important;
+                margin-bottom: 1.25rem !important;
+            }
+            .faculty-group-title {
+                width: 100%;
+                font-size: 1.1rem;
+                line-height: 1.2;
+            }
+            .faculty-group-divider {
+                display: none;
+            }
+            .faculty-card-photo {
+                height: 200px;
+            }
+            .faculty-card-body {
+                padding: 1.2rem 1rem 1.1rem;
+            }
         }
     </style>
 </head>
@@ -136,10 +174,10 @@
                             $displayDeptName = in_array($deptName, ['Unassigned', 'Unassigned Staff'], true) ? 'Staff' : $deptName;
                         @endphp
                         <div class="mb-5">
-                            <div class="d-flex align-items-center gap-3 mb-4">
-                                <h2 class="h4 fw-700 mb-0" style="color: {{ $headerColor }};">{{ $displayDeptName }}</h2>
+                            <div class="d-flex align-items-center gap-3 mb-4 faculty-group-header">
+                                <h2 class="h4 fw-700 mb-0 faculty-group-title" style="color: {{ $headerColor }};">{{ $displayDeptName }}</h2>
                                 <span class="badge rounded-pill px-3 py-1" style="background: {{ $headerColor }}1a; color: {{ $headerColor }}; font-size: 0.8rem; font-weight: 500;">{{ $members->count() }} {{ Str::plural('member', $members->count()) }}</span>
-                                <div class="flex-grow-1" style="height: 1px; background: {{ $headerColor }}33;"></div>
+                                <div class="flex-grow-1 faculty-group-divider" style="height: 1px; background: {{ $headerColor }}33;"></div>
                             </div>
                             <div class="row g-4">
                                 @foreach ($members as $member)
@@ -149,7 +187,7 @@
                                                 @if($member->photo)
                                                     <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($member->photo, 'images') }}" alt="{{ e($member->name) }}" class="faculty-card-photo">
                                                 @else
-                                                    <img src="{{ $collegeLogoUrl }}" alt="{{ e($member->name) }}" class="faculty-card-photo" style="object-fit: contain; padding: 10px;">
+                                                    <img src="{{ $collegeLogoUrl }}" alt="{{ e($member->name) }}" class="faculty-card-photo" style="object-fit: contain; padding: 1rem; background: #ffffff;">
                                                 @endif
                                             </div>
                                             <div class="faculty-card-body">

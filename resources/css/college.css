@@ -545,65 +545,84 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 
 .college-page .event-card {
     position: relative;
-    border-radius: 14px;
+    border-radius: 22px;
     overflow: hidden;
-    background: #1f2937;
-    color: #fff;
-    min-height: 170px;
+    background: #ffffff;
+    color: #0f172a;
+    min-height: 100%;
     text-decoration: none;
     display: flex;
-    align-items: flex-end;
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    flex-direction: column;
+    padding: 1.35rem;
+    border: 1px solid color-mix(in srgb, var(--college-header-color, #86090a) 10%, #e2e8f0 90%);
+    box-shadow: 0 16px 34px rgba(15, 23, 42, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .college-page .event-card:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 14px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px);
+    box-shadow: 0 22px 40px rgba(15, 23, 42, 0.12);
+    border-color: color-mix(in srgb, var(--college-header-color, #86090a) 20%, #cbd5e1 80%);
 }
 
 .college-page .event-card img {
-    position: absolute;
-    inset: 0;
+    position: relative;
     width: 100%;
-    height: 100%;
+    height: 210px;
     object-fit: cover;
-    filter: brightness(0.8);
+    border-radius: 18px;
+    margin-top: 0.9rem;
+    filter: none;
 }
 
 .college-page .event-card-content {
     position: relative;
-    z-index: 1;
     width: 100%;
-    padding: 0.75rem 0.9rem;
-    background: rgba(0, 0, 0, 0.55);
+    padding: 1.35rem 0 0;
+    background: transparent;
+}
+
+.college-page .event-card-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
 }
 
 .college-page .event-card-tag {
     display: inline-block;
-    padding: 0.15rem 0.5rem;
+    padding: 0.45rem 0.9rem;
     border-radius: 999px;
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.6px;
-    margin-bottom: 0.35rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0;
+    margin-bottom: 0;
+    border: 1px solid #d7dce4;
 }
 
 .college-page .event-card-tag.news {
     background: #ffffff;
-    color: var(--college-header-color, #86090a);
+    color: #334155;
 }
 
 .college-page .event-card-tag.announcement {
-    background: #fdecea;
-    color: var(--college-header-color, #86090a);
+    background: #f8fafc;
+    color: #334155;
 }
 
 .college-page .event-card-title {
     margin: 0;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 1.05rem;
+    line-height: 1.15;
+    color: #163a5f;
+}
+
+.college-page .event-card-time {
+    font-size: 0.9rem;
+    color: #6b7280;
+    white-space: nowrap;
 }
 
 .college-page .event-card-dot {
@@ -617,17 +636,7 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 }
 
 .college-page .event-date-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background: #fff;
-    color: #111827;
-    border-radius: 8px;
-    padding: 0.3rem 0.45rem;
-    text-align: center;
-    font-weight: 800;
-    min-width: 48px;
-    z-index: 2;
+    display: none;
 }
 
 .college-page .event-date-badge .month {
@@ -644,6 +653,16 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 .college-page .event-date-badge .day {
     font-size: 0.65rem;
     line-height: 1;
+}
+
+.college-page .event-card-readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 1rem;
+    color: var(--college-header-color, #86090a);
+    font-weight: 700;
+    font-size: 0.95rem;
 }
 
 .college-page .events-view-all {
@@ -1468,6 +1487,11 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
         height: calc(100vh - 70px);
         min-height: calc(100vh - 70px);
     }
+
+    .college-page .retro-hero .retro-title {
+        font-size: clamp(2.8rem, 14vw, 4.25rem) !important;
+        line-height: 0.95 !important;
+    }
 }
 
 /* Faculty Page Title Spacing */
@@ -1478,12 +1502,12 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 
 @media (max-width: 991px) {
     .faculty-page-title {
-        margin-top: 80px;
+        margin-top: 92px;
     }
 }
 
 @media (max-width: 576px) {
     .faculty-page-title {
-        margin-top: 70px;
+        margin-top: 106px;
     }
 }

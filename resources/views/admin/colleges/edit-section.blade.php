@@ -4,7 +4,10 @@
 
 @section('content')
     @php
-        $editMode = request()->get('edit'); // 'overview', 'retro', 'featured_video', or null
+        $editMode = $resolvedEditMode ?? request()->query('edit');
+        if ($sectionSlug === 'overview' && $editMode === null) {
+            $editMode = 'overview';
+        }
         $isOverviewEdit = $editMode === 'overview';
         $isRetroEdit = $editMode === 'retro';
         $isFeaturedVideoEdit = $editMode === 'featured_video';

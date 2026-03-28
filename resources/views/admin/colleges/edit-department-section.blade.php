@@ -1648,6 +1648,24 @@
                         @endif
 
                         @if($sectionSlug === 'overview' && !$editMode)
+                            <div class="col-12 mb-3">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="is_visible" name="is_visible" value="1" {{ ($content['is_visible'] ?? true) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold" for="is_visible">Visible on Public Page</label>
+                                </div>
+                                <small class="text-muted">Toggle to show or hide this section on the department page.</small>
+                            </div>
+
+                            <div class="col-12 mb-3">
+                                <input type="hidden" name="bulk_section_visibility_mode" value="1">
+                                <input type="hidden" name="bulk_section_visibility" value="0">
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" id="bulk_section_visibility" name="bulk_section_visibility" value="1" {{ old('bulk_section_visibility', true) ? 'checked' : '' }}>
+                                    <label class="form-check-label fw-bold" for="bulk_section_visibility">Make all department sections visible</label>
+                                </div>
+                                <small class="text-muted">Turn this off to hide all department sections in one go.</small>
+                            </div>
+
                             <div class="col-md-6">
                                 <label for="logo" class="form-label">Department Logo</label>
                                 <div class="border rounded-4 bg-light d-flex align-items-center justify-content-center overflow-hidden mb-3 position-relative" style="width: 160px; height: 160px;">

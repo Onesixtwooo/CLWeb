@@ -44,32 +44,30 @@
             background: {{ $headerColor }} !important;
         }
 
-        /* New card layout: banner + date tag + category + title + description */
+        /* Editorial board card layout */
         .news-board-card {
             display: block;
             background: #fff;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            border: 1px solid #e5e7eb;
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
             text-decoration: none;
             color: inherit;
-            transition: box-shadow 0.2s ease, transform 0.2s ease;
+            transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
             position: relative;
         }
         .news-board-card:hover {
-            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-            transform: translateY(-2px);
+            box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12);
+            transform: translateY(-4px);
+            border-color: color-mix(in srgb, {{ $headerColor }} 18%, #d1d5db 82%);
         }
-        /* Banner: whole section is one image, with date tag overlapping */
         .news-board-card-banner {
             position: relative;
-            min-height: 280px;
-            overflow: visible;
-            background: {{ $headerColor }};
-            z-index: 2;
+            height: 260px;
+            overflow: hidden;
+            background: #f8fafc;
         }
         .news-board-card-banner img {
-            position: absolute;
-            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
@@ -91,44 +89,82 @@
         .news-board-banner-placeholder.banner-dark {
             background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
         }
-        .news-board-date-tag {
-            position: absolute;
-            bottom: -20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: {{ $headerColor }};
-            color: #fff;
-            padding: 0.5rem 1.25rem;
-            font-size: 0.85rem;
-            font-weight: 700;
-            white-space: nowrap;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-            z-index: 10;
-        }
         .news-board-card-body {
-            padding: 2rem 1.25rem 1.25rem 1.25rem;
-            position: relative;
-            z-index: 1;
-            margin-top: -1px;
+            padding: 1.15rem 1.35rem 1.3rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 230px;
+        }
+        .news-board-meta {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: #9ca3af;
+            margin-bottom: 1.35rem;
         }
         .news-board-category {
-            color: {{ $headerColor }};
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
+            color: #9ca3af;
+            font-size: inherit;
+            font-weight: inherit;
+            margin-bottom: 0;
+            position: relative;
+            padding-left: 1rem;
+        }
+        .news-board-category::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 0.55rem;
+            height: 2px;
+            transform: translateY(-50%);
+            background: color-mix(in srgb, {{ $headerColor }} 58%, #f3b3a3 42%);
+        }
+        .news-board-card-title-wrap {
+            flex: 1;
         }
         .news-board-card-title {
             font-size: 1.1rem;
             font-weight: 700;
             color: #111827;
-            margin-bottom: 0.5rem;
-            line-height: 1.3;
+            margin-bottom: 0;
+            line-height: 1.28;
         }
         .news-board-card-desc {
             font-size: 0.9rem;
             color: #6b7280;
             line-height: 1.5;
             margin: 0;
+        }
+        .news-board-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1.4rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eef2f7;
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .news-board-posted {
+            color: #9ca3af;
+        }
+        .news-board-posted strong {
+            color: #111827;
+            margin-left: 0.35rem;
+        }
+        .news-board-read {
+            color: color-mix(in srgb, {{ $headerColor }} 70%, #d97757 30%);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
         }
         .news-board-grid {
             display: grid;
@@ -137,6 +173,17 @@
         }
         @media (max-width: 991px) {
             .news-board-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 767.98px) {
+            .news-board-card-banner {
+                height: 220px;
+            }
+            .news-board-card-body {
+                min-height: 0;
+            }
+            .news-board-card-footer {
+                flex-wrap: wrap;
+            }
         }
         .news-board-card.pagination-hidden { display: none !important; }
         .news-board-pagination {
@@ -211,12 +258,18 @@
                                     $bannerStyle = !$article->banner ? 'object-fit: contain; padding: 2rem; background: #f8f9fa;' : '';
                                 @endphp
                                 <img src="{{ $bannerSrc }}" alt="{{ $article->title }}" style="{{ $bannerStyle }}">
-                                <span class="news-board-date-tag">{{ $article->published_at->format('F j, Y') }}</span>
                             </div>
                             <div class="news-board-card-body">
-                                <p class="news-board-category">{{ $article->category ?? 'News' }}</p>
-                                <h3 class="news-board-card-title">{{ $article->title }}</h3>
-                                <p class="news-board-card-desc">{{ Str::limit(strip_tags($article->body), 150) }}</p>
+                                <div class="news-board-meta">
+                                    <p class="news-board-category">{{ $article->category ?? 'News' }}</p>
+                                </div>
+                                <div class="news-board-card-title-wrap">
+                                    <h3 class="news-board-card-title">{{ $article->title }}</h3>
+                                </div>
+                                <div class="news-board-card-footer">
+                                    <span class="news-board-posted">Posted:<strong>{{ strtoupper($article->published_at->format('M d, Y')) }}</strong></span>
+                                    <span class="news-board-read">Read Article <span aria-hidden="true">▶</span></span>
+                                </div>
                             </div>
                         </a>
                         @empty
@@ -251,12 +304,18 @@
                                     $annBannerStyle = !$announcement->banner ? 'object-fit: contain; padding: 2rem; background: #f8f9fa;' : '';
                                 @endphp
                                 <img src="{{ $annBannerSrc }}" alt="{{ $announcement->title }}" style="{{ $annBannerStyle }}">
-                                <span class="news-board-date-tag">{{ $announcement->published_at->format('F j, Y') }}</span>
                             </div>
                             <div class="news-board-card-body">
-                                <p class="news-board-category">Announcement</p>
-                                <h3 class="news-board-card-title">{{ $announcement->title }}</h3>
-                                <p class="news-board-card-desc">{{ Str::limit(strip_tags($announcement->body), 150) }}</p>
+                                <div class="news-board-meta">
+                                    <p class="news-board-category">Announcement</p>
+                                </div>
+                                <div class="news-board-card-title-wrap">
+                                    <h3 class="news-board-card-title">{{ $announcement->title }}</h3>
+                                </div>
+                                <div class="news-board-card-footer">
+                                    <span class="news-board-posted">Posted:<strong>{{ strtoupper($announcement->published_at->format('M d, Y')) }}</strong></span>
+                                    <span class="news-board-read">Read Article <span aria-hidden="true">▶</span></span>
+                                </div>
                             </div>
                         </a>
                         @empty

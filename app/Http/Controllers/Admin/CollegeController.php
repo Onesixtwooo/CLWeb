@@ -540,6 +540,32 @@ class CollegeController extends Controller
 
     public function edit(Request $request, string $college, string $section): View
     {
+        return $this->renderCollegeSectionEditor($request, $college, $section);
+    }
+
+    public function createCollegeRetro(Request $request, string $college): View|RedirectResponse
+    {
+        return $this->renderCollegeSectionEditor($request, $college, 'overview', 'retro');
+    }
+
+    public function editCollegeFeaturedVideo(Request $request, string $college): View|RedirectResponse
+    {
+        return $this->renderCollegeSectionEditor($request, $college, 'overview', 'featured_video');
+    }
+
+    public function editCollegeRetro(Request $request, string $college, int $retro): View|RedirectResponse
+    {
+        return $this->renderCollegeSectionEditor($request, $college, 'overview', 'retro', $retro);
+    }
+
+    private function renderCollegeSectionEditor(
+        Request $request,
+        string $college,
+        string $section,
+        ?string $forcedEditMode = null,
+        ?int $forcedRetroId = null
+    ): View|RedirectResponse
+    {
         $colleges = self::getColleges();
         if (! isset($colleges[$college])) {
             abort(404, 'College not found.');
@@ -581,12 +607,13 @@ class CollegeController extends Controller
         $content = $sectionContent;
         
         // For featured_video edit mode, load from CollegeVideo table
-        $editMode = $request->get('edit');
+        $editMode = $forcedEditMode ?? $request->query('edit');
         if ($section === 'overview' && $editMode === 'featured_video') {
             $videoRecord = CollegeVideo::where('college_slug', $college)->first();
             $content = $videoRecord; // Use video record directly
-        } elseif ($request->get('edit') === 'retro') {
-            $retroId = $this->decodeCollegeRetroKey($request->get('retro_key'), $college)
+        } elseif ($editMode === 'retro') {
+            $retroId = $forcedRetroId
+                ?? $this->decodeCollegeRetroKey($request->query('retro_key'), $college)
                 ?? $request->integer('retro_id');
             if ($retroId) {
                 // Edit existing
@@ -663,6 +690,7 @@ class CollegeController extends Controller
             'defaultTitle' => $defaultContent['title'],
             'defaultBody' => $defaultContent['body'] ?? '',
             'detailsText' => $detailsText,
+            'resolvedEditMode' => $editMode,
         ]);
     }
 
@@ -2991,12 +3019,37 @@ class CollegeController extends Controller
                 'social_other' => ['nullable', 'url', 'max:500'],
                 'email' => ['nullable', 'email', 'max:255'],
                 'phone' => ['nullable', 'string', 'max:255'],
+                'is_visible' => ['nullable'],
+                'bulk_section_visibility' => ['nullable'],
+                'bulk_section_visibility_mode' => ['nullable'],
             ]);
 
             // Handle Overview Section with direct columns
             if ($section === 'overview') {
                 $department->overview_title = $data['title'];
                 $department->overview_body = $data['body'] ?? '';
+                $department->overview_is_visible = $request->has('is_visible');
+
+                if ($request->has('bulk_section_visibility_mode')) {
+                    $visibleState = $request->boolean('bulk_section_visibility');
+                    foreach ([
+                        'overview_is_visible',
+                        'faculty_is_visible',
+                        'objectives_is_visible',
+                        'programs_is_visible',
+                        'awards_is_visible',
+                        'research_is_visible',
+                        'extension_is_visible',
+                        'training_is_visible',
+                        'facilities_is_visible',
+                        'membership_is_visible',
+                        'alumni_is_visible',
+                        'linkages_is_visible',
+                        'organizations_is_visible',
+                    ] as $visibilityColumn) {
+                        $department->{$visibilityColumn} = $visibleState;
+                    }
+                }
 
                 if ($request->boolean('remove_logo') && ! $request->hasFile('logo')) {
                     if (! empty($department->logo)) {
@@ -3263,11 +3316,11 @@ class CollegeController extends Controller
                 'video_file' => ['nullable', 'file', 'mimes:mp4,webm,ogg', 'max:51200'], // max 50MB
                 'video_title' => ['nullable', 'string', 'max:255'],
                 'video_description' => ['nullable', 'string'],
-                'is_visible' => ['nullable', 'string'], // Checkbox returns 'on' or null
+                'is_visible' => ['nullable', 'string'],
             ]);
 
-            // Handle is_visible checkbox
-            $videoData['is_visible'] = isset($videoData['is_visible']) && $videoData['is_visible'] === 'on';
+            // The form submits "1" for checked, so use Laravel's boolean parsing here.
+            $videoData['is_visible'] = $request->boolean('is_visible');
 
             // Get existing video record
             $existingVideo = CollegeVideo::where('college_slug', $college)->first();

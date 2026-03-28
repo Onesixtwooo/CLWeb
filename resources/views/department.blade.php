@@ -258,6 +258,40 @@
             color: #ffffff;
         }
 
+        @media (max-width: 767.98px) {
+            .it-section-menu {
+                top: 35px;
+            }
+
+            .it-section-menu .container {
+                padding-left: 0.75rem;
+                padding-right: 0.75rem;
+            }
+
+            .it-section-menu-inner {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                gap: 0.45rem;
+                padding: 0.7rem 0 0.8rem;
+                overflow-x: auto;
+                overflow-y: hidden;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none;
+            }
+
+            .it-section-menu-inner::-webkit-scrollbar {
+                display: none;
+            }
+
+            .it-section-menu button,
+            .it-section-menu a {
+                flex: 0 0 auto;
+                white-space: nowrap;
+                padding: 0.38rem 0.8rem;
+                font-size: 0.8rem;
+            }
+        }
+
         /* Footer socials (KEEP IN TOUCH) */
         .it-footer-social-title {
             font-weight: 800;
@@ -368,7 +402,7 @@
         /* Faculty Card Styles */
         .faculty-card {
             background: {{ $headerColor }}; /* Body colored based on header */
-            border-radius: 12px;
+            border-radius: 0;
             overflow: hidden;
             border: 0;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -391,7 +425,7 @@
         .faculty-card-photo {
             width: 100%;
             height: 180px;
-            border-radius: 4px;
+            border-radius: 0;
             object-fit: contain;
             border: 1px solid rgba(0, 0, 0, 0.05);
             box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.05);
@@ -591,9 +625,12 @@
 
         <!-- Section Menu -->
         @php
-            $hasOverview = !empty($department->overview_body) || 
+            $overviewVisible = $department->overview_is_visible ?? true;
+            $hasOverview = $overviewVisible && (
+                          !empty($department->overview_body) || 
                           ($department->outcomes->count() > 0) ||
-                          (!empty($department->graduate_outcomes));
+                          (!empty($department->graduate_outcomes))
+            );
             
             $objectivesVisible = $department->objectives_is_visible ?? true;
             $hasObjectives = $objectivesVisible && ($department->objectives->count() > 0 || !empty($department->objectives_body) || $department->curricula->count() > 0);
@@ -677,6 +714,7 @@
         @endif
 
         <!-- Overview Section -->
+        @if($overviewVisible)
         <section id="program-overview" class="py-5 it-tab-section is-active">
             <div class="container">
                 @php
@@ -786,6 +824,7 @@
                 @endif
             </div>
         </section>
+        @endif
 
         <!-- Objectives Section -->
         @if($hasObjectives)

@@ -25,6 +25,77 @@
             gap: 1.5rem;
             align-items: stretch;
         }
+        .facility-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 100%;
+            background: #ffffff;
+            border: 1px solid color-mix(in srgb, {{ $headerColor }} 10%, #e2e8f0 90%);
+            border-radius: 18px;
+            overflow: hidden;
+            text-decoration: none;
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+        .facility-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 36px rgba(15, 23, 42, 0.11);
+            border-color: color-mix(in srgb, {{ $headerColor }} 24%, #cbd5e1 76%);
+        }
+        .facility-card-image {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(
+                180deg,
+                color-mix(in srgb, {{ $headerColor }} 10%, #ffffff 90%) 0%,
+                color-mix(in srgb, {{ $headerColor }} 5%, #f8fafc 95%) 100%
+            );
+        }
+        .facility-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            border-radius: 0;
+            filter: saturate(0.96) contrast(1.01);
+        }
+        .facility-card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            padding: 0.9rem 1.3rem 1.4rem;
+            color: #ffffff;
+            background: linear-gradient(
+                180deg,
+                color-mix(in srgb, {{ $headerColor }} 92%, #ffffff 8%) 0%,
+                color-mix(in srgb, {{ $headerColor }} 78%, #0f172a 22%) 100%
+            );
+        }
+        .facility-card-title {
+            margin: 0 0 0.65rem;
+            font-size: 1.45rem;
+            line-height: 1.1;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            text-transform: none;
+            color: #ffffff;
+        }
+        .facility-card-text {
+            margin: 0;
+            font-size: 0.98rem;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.88);
+        }
+        @media (max-width: 767.98px) {
+            .facility-card-image {
+                height: 200px;
+            }
+            .facility-card-title {
+                font-size: 1.25rem;
+            }
+        }
 
         /* About Section Carousel Styles */
         .college-about-media .carousel {
@@ -166,14 +237,225 @@
             background: transparent;
         }
         #programsKnowSliderTrack .program-card {
-            flex: 0 0 300px;
-            max-width: 85vw;
+            flex: 0 0 calc((100% - 4.5rem) / 4);
+            max-width: calc((100% - 4.5rem) / 4);
+            min-width: 0;
             scroll-snap-align: center;
+        }
+        .department-showcase-card {
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            min-height: 430px;
+            padding: 1.2rem;
+            border-radius: 22px;
+            overflow: hidden;
+            background-size: cover;
+            background-position: center;
+            border: 1px solid color-mix(in srgb, {{ $headerColor }} 38%, #ffffff 62%);
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.22);
+        }
+        .department-showcase-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(2, 6, 23, 0.08) 0%, rgba(2, 6, 23, 0.2) 35%, rgba(2, 6, 23, 0.82) 100%),
+                linear-gradient(135deg, color-mix(in srgb, {{ $headerColor }} 28%, transparent 72%) 0%, transparent 58%);
+        }
+        .department-showcase-content {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            padding: 1.15rem 1.1rem 1rem;
+            border-radius: 18px;
+            backdrop-filter: blur(8px);
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.12) 0%, rgba(15, 23, 42, 0.38) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+        }
+        .department-showcase-title {
+            margin: 0 0 0.6rem;
+            font-size: 1.2rem;
+            line-height: 1.15;
+            font-weight: 500;
+            letter-spacing: -0.03em;
+            color: #ffffff;
+        }
+        .department-showcase-text {
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.82);
+        }
+        .department-showcase-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 1rem;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+        }
+        .department-card-flat {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            min-height: 430px;
+            padding: 1.2rem;
+            border-radius: 22px !important;
+            overflow: hidden;
+            border: 1px solid color-mix(in srgb, {{ $headerColor }} 38%, #ffffff 62%);
+            box-shadow: 0 24px 50px rgba(15, 23, 42, 0.22);
+        }
+        .department-card-flat .program-card-overlay {
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(180deg, rgba(2, 6, 23, 0.08) 0%, rgba(2, 6, 23, 0.2) 35%, rgba(2, 6, 23, 0.82) 100%),
+                linear-gradient(135deg, color-mix(in srgb, {{ $headerColor }} 28%, transparent 72%) 0%, transparent 58%) !important;
+        }
+        .department-card-flat:hover .program-card-overlay {
+            background:
+                linear-gradient(180deg, rgba(2, 6, 23, 0.08) 0%, rgba(2, 6, 23, 0.2) 35%, rgba(2, 6, 23, 0.82) 100%),
+                linear-gradient(135deg, color-mix(in srgb, {{ $headerColor }} 28%, transparent 72%) 0%, transparent 58%) !important;
+            background-blend-mode: normal !important;
+        }
+        .department-card-flat .retro-card-border {
+            display: none;
+        }
+        .department-card-flat .retro-card-title,
+        .department-card-flat .retro-card-text,
+        .department-card-flat .retro-link {
+            position: relative;
+            z-index: 1;
+            opacity: 1 !important;
+            transform: none !important;
+        }
+        .department-card-flat .retro-card-title {
+            margin: 0 0 0.6rem;
+            font-size: 1.2rem;
+            line-height: 1.15;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            color: #ffffff !important;
+        }
+        .department-card-flat .retro-card-text {
+            display: block !important;
+            margin: 0;
+            font-size: 0.95rem;
+            line-height: 1.55;
+            color: rgba(255, 255, 255, 0.82) !important;
+            max-height: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+        }
+        .department-card-flat .retro-link {
+            display: inline-flex !important;
+            align-items: center;
+            gap: 0.4rem;
+            width: fit-content;
+            margin-top: 1rem;
+            color: #ffffff !important;
+            text-decoration: none;
+            font-size: 0.92rem;
+            font-weight: 600;
+            max-height: none !important;
+            overflow: visible !important;
+            padding: 0 !important;
+        }
+        .featured-video-richtext {
+            max-width: 800px;
+            margin: 0.5rem auto 0;
+        }
+        .featured-video-richtext p:last-child {
+            margin-bottom: 0;
+        }
+        .featured-video-richtext img,
+        .featured-video-richtext iframe,
+        .featured-video-richtext video {
+            max-width: 100%;
+            height: auto;
+        }
+        .featured-video-richtext iframe {
+            width: 100%;
+            min-height: 240px;
+        }
+        .featured-video-richtext table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+        }
+        .featured-video-richtext ul,
+        .featured-video-richtext ol {
+            text-align: left;
+            padding-left: 1.5rem;
+        }
+        .featured-video-richtext pre {
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+        .about-contact-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.9rem 1.5rem;
+            margin-top: 0.75rem;
+        }
+        .about-contact-label {
+            display: inline-block;
+            margin-top: 1.25rem;
+            color: {{ $headerColor }};
+            font-size: 0.82rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+        }
+        .about-contact-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.65rem;
+            color: #334155;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .about-contact-item i {
+            color: {{ $headerColor }};
+            font-size: 1rem;
+        }
+        .about-contact-item svg {
+            width: 1rem;
+            height: 1rem;
+            color: {{ $headerColor }};
+            flex-shrink: 0;
+        }
+        .about-contact-item:hover {
+            color: {{ $headerColor }};
         }
         @media (max-width: 767.98px) {
             #programsKnowSliderTrack .program-card {
                 flex: 0 0 100%;
                 max-width: none;
+            }
+            .department-showcase-card {
+                min-height: 360px;
+                padding: 1rem;
+            }
+            .department-card-flat {
+                min-height: 360px;
+                padding: 1rem;
+            }
+            .department-showcase-title {
+                font-size: 1.05rem;
+            }
+            .department-card-flat .retro-card-title {
+                font-size: 1.05rem;
+            }
+            .department-showcase-text {
+                font-size: 0.9rem;
+            }
+            .department-card-flat .retro-card-text {
+                font-size: 0.9rem;
             }
         }
         .programs-know-prev,
@@ -266,6 +548,10 @@
 
         <!-- About -->
         @if($overviewVisible)
+        @php
+            $savedCollegeEmail = trim((string) ($collegeContact->email ?? ''));
+            $savedCollegePhone = trim((string) ($collegeContact->phone ?? ''));
+        @endphp
         <section id="about" class="testimonials college-about">
             <div class="container">
                 <div class="row align-items-center gy-4">
@@ -281,6 +567,28 @@
                                 {{ $collegeName }} is one of the colleges in the Central Luzon State University, committed to quality education and research in line with the University and national thrusts.
                             @endif
                         </p>
+                        @if($savedCollegeEmail !== '' || $savedCollegePhone !== '')
+                            <span class="about-contact-label">Contacts</span>
+                            <div class="about-contact-list">
+                                @if($savedCollegeEmail !== '')
+                                    <a href="mailto:{{ $savedCollegeEmail }}" class="about-contact-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M4 4h16v16H4z"></path>
+                                            <path d="m22 6-10 7L2 6"></path>
+                                        </svg>
+                                        <span>{{ $savedCollegeEmail }}</span>
+                                    </a>
+                                @endif
+                                @if($savedCollegePhone !== '')
+                                    <a href="tel:{{ preg_replace('/[^0-9+]/', '', $savedCollegePhone) }}" class="about-contact-item">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.12.9.35 1.78.68 2.61a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.47-1.25a2 2 0 0 1 2.11-.45c.83.33 1.71.56 2.61.68A2 2 0 0 1 22 16.92z"></path>
+                                        </svg>
+                                        <span>{{ $savedCollegePhone }}</span>
+                                    </a>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                     <div class="col-lg-6">
                         <div class="college-about-media">
@@ -426,7 +734,7 @@
                                 $deptOverview = $department->getSection('overview');
                                 $cardImage = \App\Providers\AppServiceProvider::resolveLogoUrl($deptOverview['card_image'] ?? $collegeLogoUrl);
                             @endphp
-                            <div class="program-card retro-card" style="background-image: url('{{ $cardImage }}'); background-size: cover; background-position: center;">
+                            <div class="program-card retro-card department-card-flat" style="background-image: url('{{ $cardImage }}'); background-size: cover; background-position: center;">
                                 <div class="program-card-overlay" style="background: rgba(0, 0, 0, 0.7);"></div>
                                 <div class="retro-card-border"></div>
                                 <h3 class="retro-card-title" style="position: relative; z-index: 2; color: #fff;">{{ $department->name }}</h3>
@@ -447,7 +755,7 @@
                             $cardImage = \App\Providers\AppServiceProvider::resolveLogoUrl($deptOverview['card_image'] ?? $collegeLogoUrl);
                         @endphp
                         <div class="col">
-                        <div class="program-card retro-card" style="background-image: url('{{ $cardImage }}'); background-size: cover; background-position: center;">
+                        <div class="program-card retro-card department-card-flat" style="background-image: url('{{ $cardImage }}'); background-size: cover; background-position: center;">
                             <div class="program-card-overlay" style="background: rgba(0, 0, 0, 0.7);"></div>
                             <div class="retro-card-border"></div>
                             <h3 class="retro-card-title" style="position: relative; z-index: 2; color: #fff;">{{ $department->name }}</h3>
@@ -477,16 +785,15 @@
                     @php
                         $facilityImage = \App\Providers\AppServiceProvider::resolveLogoUrl($facility->photo ?: $collegeLogoUrl);
                     @endphp
-                    <div class="program-card retro-card">
-                        <div class="program-card-overlay" style="background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('{{ $facilityImage }}'); background-size: cover; background-position: center;"></div>
-                        <div class="retro-card-border"></div>
-                        <h3 class="retro-card-title" style="position: relative; z-index: 2; color: #fff;">
-                            <a href="{{ route('college.facility.show', ['college' => $collegeSlug, 'facility' => $facility]) }}" style="color: #fff; text-decoration: none;" class="stretched-link">
-                                {{ $facility->name }}
-                            </a>
-                        </h3>
-                        <p class="retro-card-text" style="position: relative; z-index: 2; color: #f0f0f0;">{{ Str::limit(strip_tags($facility->description ?? ''), 150) ?: 'Explore this facility to learn more about its resources and capabilities.' }}</p>
-                    </div>
+                    <a href="{{ route('college.facility.show', ['college' => $collegeSlug, 'facility' => $facility]) }}" class="facility-card">
+                        <div class="facility-card-image">
+                            <img src="{{ $facilityImage }}" alt="{{ $facility->name }}">
+                        </div>
+                        <div class="facility-card-body">
+                            <h3 class="facility-card-title">{{ $facility->name }}</h3>
+                            <p class="facility-card-text">{{ Str::limit(strip_tags($facility->description ?? ''), 160) ?: 'Explore this facility to learn more about its resources and capabilities.' }}</p>
+                        </div>
+                    </a>
                 @endforeach
             </div>
         </div>
@@ -501,7 +808,7 @@
                 <span class="section-badge retro-label college-theme" style="padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; align-self: center; width: fit-content;">Watch</span>
                 <h2 class="retro-section-title mt-3">{{ $featuredVideo->video_title ?: 'Featured Video' }}</h2>
                 @if($featuredVideo->video_description)
-                <p class="retro-section-text mx-auto mt-2">{{ $featuredVideo->video_description }}</p>
+                <div class="retro-section-text featured-video-richtext">{!! $featuredVideo->video_description !!}</div>
                 @else
                 <p class="retro-section-text mx-auto mt-2">Highlights from {{ $collegeName }}—programs, facilities, and community.</p>
                 @endif
@@ -573,15 +880,16 @@
             <div class="row g-4 justify-content-center">
                 @foreach($extensions as $item)
                     <div class="col-md-6 col-lg-4">
-                        <div class="program-card retro-card h-100" style="min-height: 250px;">
-                             @php
-                                $bgImage = \App\Providers\AppServiceProvider::resolveLogoUrl(!empty($item->image) ? $item->image : $collegeLogoUrl);
-                            @endphp
-                            <div class="program-card-overlay" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.8)), url('{{ $bgImage }}'); background-size: cover; background-position: center;"></div>
-                            <div class="retro-card-border"></div>
-                            <div class="d-flex flex-column h-100 justify-content-end p-4" style="position: relative; z-index: 2;">
-                                <h3 class="retro-card-title text-white mb-2">{{ $item->title ?? 'Extension Activity' }}</h3>
-                                <p class="retro-card-text text-white-50 small mb-0">{{ Str::limit(strip_tags($item->description ?? ''), 120) }}</p>
+                        @php
+                            $bgImage = \App\Providers\AppServiceProvider::resolveLogoUrl(!empty($item->image) ? $item->image : $collegeLogoUrl);
+                        @endphp
+                        <div class="facility-card h-100">
+                            <div class="facility-card-image">
+                                <img src="{{ $bgImage }}" alt="{{ $item->title ?? 'Extension Activity' }}">
+                            </div>
+                            <div class="facility-card-body">
+                                <h3 class="facility-card-title">{{ $item->title ?? 'Extension Activity' }}</h3>
+                                <p class="facility-card-text">{{ Str::limit(strip_tags($item->description ?? ''), 160) ?: 'Community engagement and outreach programs.' }}</p>
                             </div>
                         </div>
                     </div>
@@ -602,20 +910,18 @@
             </div>
 
             <div class="row g-4 justify-content-center">
-                 @foreach($trainings as $training)
+                @foreach($trainings as $training)
                     <div class="col-md-6 col-lg-4">
-                        <a href="{{ route('college.training.show', ['college' => $collegeSlug, 'slug' => \Illuminate\Support\Str::slug($training->title)]) }}" class="text-decoration-none">
-                            <div class="program-card retro-card h-100" style="min-height: 250px; cursor: pointer;">
-                                 @php
-                                    $bgImage = \App\Providers\AppServiceProvider::resolveLogoUrl(!empty($training->image) ? $training->image : $collegeLogoUrl);
-                                @endphp
-                                <div class="program-card-overlay" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)), url('{{ $bgImage }}'); background-size: cover; background-position: center;"></div>
-                                <div class="retro-card-border"></div>
-                                <div class="d-flex flex-column h-100 justify-content-end p-4" style="position: relative; z-index: 2;">
-                                    <h3 class="retro-card-title text-white mb-2">{{ $training->title ?? 'Training Workshop' }}</h3>
-                                    <p class="retro-card-text text-white-50 small mb-3">{{ Str::limit(strip_tags($training->description ?? ''), 120) }}</p>
-                                    <span class="text-white-50 small" style="opacity: 0.7;">View details →</span>
-                                </div>
+                        @php
+                            $bgImage = \App\Providers\AppServiceProvider::resolveLogoUrl(!empty($training->image) ? $training->image : $collegeLogoUrl);
+                        @endphp
+                        <a href="{{ route('college.training.show', ['college' => $collegeSlug, 'slug' => \Illuminate\Support\Str::slug($training->title)]) }}" class="facility-card h-100 text-decoration-none">
+                            <div class="facility-card-image">
+                                <img src="{{ $bgImage }}" alt="{{ $training->title ?? 'Training Workshop' }}">
+                            </div>
+                            <div class="facility-card-body">
+                                <h3 class="facility-card-title">{{ $training->title ?? 'Training Workshop' }}</h3>
+                                <p class="facility-card-text">{{ Str::limit(strip_tags($training->description ?? ''), 160) ?: 'Capacity building and skills development.' }}</p>
                             </div>
                         </a>
                     </div>
@@ -656,30 +962,27 @@
             <div class="row g-4 justify-content-center">
                 @foreach($scholarships as $scholarship)
                     <div class="col-md-6 col-lg-4">
-                        <a href="{{ route('college.scholarship.show', ['college' => $collegeSlug, 'slug' => Str::slug($scholarship->title)]) }}" class="text-decoration-none">
-                            <div class="program-card retro-card h-100" style="min-height: 280px; cursor: pointer;">
-                                @php
-                                    $bgImage = \App\Providers\AppServiceProvider::resolveLogoUrl(!empty($scholarship->image) ? $scholarship->image : $collegeLogoUrl);
-                                @endphp
-                                <div class="program-card-overlay" style="background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.85)), url('{{ $bgImage }}'); background-size: cover; background-position: center;"></div>
-                                <div class="retro-card-border"></div>
-                                <div class="d-flex flex-column h-100 justify-content-end p-4" style="position: relative; z-index: 2;">
-                                    <h3 class="retro-card-title text-white mb-2">{{ $scholarship->title ?? 'Scholarship Program' }}</h3>
-                                    <p class="retro-card-text text-white-50 small mb-3">{{ Str::limit(strip_tags($scholarship->description ?? ''), 120) }}</p>
-                                    <span class="text-white-50 small" style="opacity: 0.7;">View details →</span>
-                                </div>
+                        @php
+                            $bgImage = \App\Providers\AppServiceProvider::resolveLogoUrl(!empty($scholarship->image) ? $scholarship->image : $collegeLogoUrl);
+                        @endphp
+                        <a href="{{ route('college.scholarship.show', ['college' => $collegeSlug, 'slug' => Str::slug($scholarship->title)]) }}" class="facility-card h-100 text-decoration-none">
+                            <div class="facility-card-image">
+                                <img src="{{ $bgImage }}" alt="{{ $scholarship->title ?? 'Scholarship Program' }}">
+                            </div>
+                            <div class="facility-card-body">
+                                <h3 class="facility-card-title">{{ $scholarship->title ?? 'Scholarship Program' }}</h3>
+                                <p class="facility-card-text">{{ Str::limit(strip_tags($scholarship->description ?? ''), 160) ?: 'Scholarship programs and opportunities for students.' }}</p>
                             </div>
                         </a>
                     </div>
                 @endforeach
             </div>
             <div class="text-center mt-5">
-                <a href="{{ route('college.scholarships', $collegeSlug) }}" class="link-button retro-link mx-auto">See all scholarship programs →</a>
+                <a href="{{ route('college.scholarships', $collegeSlug) }}" class="link-button retro-link mx-auto">See all scholarship programs ?</a>
             </div>
         </div>
     </section>
     @endif
-
     <!-- Institutes Section -->
     @if(isset($institutes) && $institutes->isNotEmpty() && (!isset($institutesSection) || $institutesSection->is_visible))
     <section id="institutes" class="programs py-5 bg-light">
@@ -875,14 +1178,14 @@
                 @forelse ($articles as $article)
                     <div class="col">
                     <a class="event-card rounded-3" href="{{ route($article->route_name, ['college' => $collegeSlug, 'slug' => $article->slug]) }}">
-                        <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($article->banner ?: $collegeLogoUrl) }}" alt="{{ $article->title }}" style="{{ !$article->banner ? 'object-fit: contain; padding: 2rem; background: #f8f9fa;' : '' }}">
-                        <div class="event-date-badge">
-                            <span class="month">{{ $article->published_at->format('M') }}</span>
-                            <span class="day">{{ $article->published_at->format('d') }}</span>
-                        </div>
-                        <div class="event-card-content">
+                        <div class="event-card-meta">
                             <span class="event-card-tag {{ strtolower($article->type) }}">{{ ucfirst($article->type) }}</span>
+                            <span class="event-card-time">{{ $article->published_at->diffForHumans() }}</span>
+                        </div>
+                        <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($article->banner ?: $collegeLogoUrl) }}" alt="{{ $article->title }}" style="{{ !$article->banner ? 'object-fit: contain; padding: 2rem; background: #f8f9fa;' : '' }}">
+                        <div class="event-card-content">
                             <p class="event-card-title">{{ $article->title }}</p>
+                            <span class="event-card-readmore">Read more <span aria-hidden="true">→</span></span>
                         </div>
                     </a>
                     </div>
@@ -951,3 +1254,4 @@
     @include('includes.college-scripts')
 </body>
 </html>
+

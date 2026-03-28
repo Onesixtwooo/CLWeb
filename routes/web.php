@@ -183,6 +183,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('colleges/{college}/edit', [CollegeController::class, 'editCollege'])->name('colleges.edit');
         Route::put('colleges/{college}', [CollegeController::class, 'updateCollege'])->name('colleges.update');
         Route::delete('colleges/{college}', [CollegeController::class, 'destroy'])->name('colleges.destroy');
+        Route::get('colleges/{college}/overview/featured-video/edit', [CollegeController::class, 'editCollegeFeaturedVideo'])->name('colleges.edit-featured-video');
+        Route::get('colleges/{college}/overview/retro/create', [CollegeController::class, 'createCollegeRetro'])->name('colleges.create-retro');
+        Route::get('colleges/{college}/overview/retro/{retro}/edit', [CollegeController::class, 'editCollegeRetro'])->name('colleges.edit-retro');
         Route::get('colleges/{college}/{section}/edit', [CollegeController::class, 'edit'])->name('colleges.edit-section');
         Route::post('colleges/{college}/{section}/toggle-visibility', [CollegeController::class, 'toggleVisibility'])->name('colleges.toggle-visibility');
         Route::put('colleges/{college}/{section}', [CollegeController::class, 'update'])->name('colleges.update-section');
