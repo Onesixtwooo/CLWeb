@@ -22,3 +22,19 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Root-level scratch/debug helpers and generated artifacts
+/read_token.php
+/debug_*.php
+/test_*.php
+/recent_log*.txt
+/render_error.log
+/debug_output.txt
+/routes_list.txt
+/college_output.html
+/dom.html
+/output*.txt
+/line85_dump.txt
+/part2.txt
+/token_output.txt
+/laravel_copy.log
