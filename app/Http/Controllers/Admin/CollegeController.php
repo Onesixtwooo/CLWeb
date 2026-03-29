@@ -388,15 +388,7 @@ class CollegeController extends Controller
 
         $alumniList = $section === 'alumni'
             ? \App\Models\DepartmentAlumnus::with('department')
-                ->where(function ($query) use ($college) {
-                    $query->where(function ($directQuery) use ($college) {
-                        $directQuery->where('college_slug', $college)
-                            ->whereNull('department_id')
-                            ->whereNull('institute_id');
-                    })->orWhereHas('department', function ($departmentQuery) use ($college) {
-                        $departmentQuery->where('college_slug', $college);
-                    });
-                })
+                ->visibleForCollege($college, false)
                 ->latest()
                 ->paginate(5, ['*'], 'alumni_page')
                 ->withQueryString()
@@ -488,15 +480,7 @@ class CollegeController extends Controller
         $hasInstitutes = \App\Models\CollegeInstitute::where('college_slug', $college)->exists();
         $hasFaqs = \App\Models\CollegeFaq::where('college_slug', $college)->exists();
         $hasTestimonials = \App\Models\CollegeTestimonial::where('college_slug', $college)->exists();
-        $hasAlumni = \App\Models\DepartmentAlumnus::where(function ($query) use ($college) {
-                $query->where(function ($directQuery) use ($college) {
-                    $directQuery->where('college_slug', $college)
-                        ->whereNull('department_id')
-                        ->whereNull('institute_id');
-                })->orWhereHas('department', function ($departmentQuery) use ($college) {
-                    $departmentQuery->where('college_slug', $college);
-                });
-            })
+        $hasAlumni = \App\Models\DepartmentAlumnus::visibleForCollege($college, false)
             ->exists();
         $hasExtensions = CollegeExtension::where('college_slug', $college)->exists();
         $hasTrainings = CollegeTraining::where('college_slug', $college)->exists();
@@ -3407,6 +3391,8 @@ class CollegeController extends Controller
             abort(403, 'You do not have access to this college.');
         }
 
+        abort_unless(DepartmentAlumnus::supportsDirectCollegeAssignments(), 404, 'College alumnus not found.');
+
         $alumnusModel = DepartmentAlumnus::where('college_slug', $college)
             ->whereNull('department_id')
             ->whereNull('institute_id')
@@ -3859,6 +3845,8 @@ class CollegeController extends Controller
                     'image' => ['nullable', 'image', 'max:2048'],
                     'remove_image' => ['nullable'],
                 ]);
+
+                abort_unless(DepartmentAlumnus::supportsDirectCollegeAssignments(), 404, 'College alumni entries are unavailable for this database schema.');
 
                 $alumnus = $request->filled('editing_alumnus_id')
                     ? DepartmentAlumnus::where('college_slug', $college)

@@ -264,16 +264,7 @@ class CollegePageController extends Controller
             ->first();
 
         $alumniPreview = \App\Models\DepartmentAlumnus::with('department')
-            ->where(function ($query) use ($college) {
-                $query->where(function ($directQuery) use ($college) {
-                    $directQuery->where('college_slug', $college)
-                        ->whereNull('department_id')
-                        ->whereNull('institute_id');
-                })->orWhereHas('department', function ($departmentQuery) use ($college) {
-                    $departmentQuery->where('college_slug', $college)
-                        ->where('alumni_is_visible', true);
-                });
-            })
+            ->visibleForCollege($college)
             ->latest()
             ->limit(3)
             ->get();
@@ -1009,17 +1000,8 @@ class CollegePageController extends Controller
             ?? Setting::get('admin_sidebar_color_' . $college . '_editor', null)
             ?? SettingsController::SIDEBAR_COLOR_DEFAULT;
 
-        $testimonials = \App\Models\DepartmentAlumnus::where(function ($query) use ($college) {
-                $query->where(function ($directQuery) use ($college) {
-                    $directQuery->where('college_slug', $college)
-                        ->whereNull('department_id')
-                        ->whereNull('institute_id');
-                })->orWhereHas('department', function ($departmentQuery) use ($college) {
-                    $departmentQuery->where('college_slug', $college)
-                        ->where('alumni_is_visible', true);
-                });
-            })
-            ->with('department')
+        $testimonials = \App\Models\DepartmentAlumnus::with('department')
+            ->visibleForCollege($college)
             ->latest()
             ->paginate(5)
             ->withQueryString();

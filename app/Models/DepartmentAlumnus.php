@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
 class DepartmentAlumnus extends Model
@@ -20,6 +22,8 @@ class DepartmentAlumnus extends Model
         'year_graduated',
         'sort_order',
     ];
+
+    protected static ?bool $hasCollegeSlugColumn = null;
 
     public function getRouteKey(): string
     {
@@ -45,7 +49,12 @@ class DepartmentAlumnus extends Model
 
     public static function findByCollegeAndRouteKey(string $collegeSlug, string|int $value): ?self
     {
-        $query = static::where('college_slug', $collegeSlug)
+        if (! static::supportsDirectCollegeAssignments()) {
+            return null;
+        }
+
+        $query = static::query()
+            ->where('college_slug', $collegeSlug)
             ->whereNull('department_id')
             ->whereNull('institute_id');
 
@@ -60,6 +69,36 @@ class DepartmentAlumnus extends Model
             ->first(function (self $alumnus) use ($routeKey) {
                 return $alumnus->title === $routeKey || Str::slug($alumnus->title) === $routeKey;
             });
+    }
+
+    public function scopeVisibleForCollege(Builder $query, string $collegeSlug, bool $respectDepartmentVisibility = true): Builder
+    {
+        return $query->where(function (Builder $alumniQuery) use ($collegeSlug, $respectDepartmentVisibility) {
+            if (static::supportsDirectCollegeAssignments()) {
+                $alumniQuery->where(function (Builder $directQuery) use ($collegeSlug) {
+                    $directQuery->where('college_slug', $collegeSlug)
+                        ->whereNull('department_id')
+                        ->whereNull('institute_id');
+                });
+            }
+
+            $alumniQuery->orWhereHas('department', function (Builder $departmentQuery) use ($collegeSlug, $respectDepartmentVisibility) {
+                $departmentQuery->where('college_slug', $collegeSlug);
+
+                if ($respectDepartmentVisibility) {
+                    $departmentQuery->where('alumni_is_visible', true);
+                }
+            });
+        });
+    }
+
+    public static function supportsDirectCollegeAssignments(): bool
+    {
+        if (static::$hasCollegeSlugColumn === null) {
+            static::$hasCollegeSlugColumn = Schema::hasColumn('department_alumni', 'college_slug');
+        }
+
+        return static::$hasCollegeSlugColumn;
     }
 
     public function department(): BelongsTo
