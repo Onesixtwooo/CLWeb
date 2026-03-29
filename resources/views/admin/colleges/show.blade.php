@@ -478,9 +478,9 @@
                 {{-- All sections render their basic title and body inside this first colleges-detail container --}}
                 <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
                     <h2 class="colleges-detail-title mb-0">{{ $content['title'] }}</h2>
-                    @if ($currentSection !== 'departments' && $currentSection !== 'explore' && $currentSection !== 'facilities' && $currentSection !== 'contact' && $currentSection !== 'training' && $currentSection !== 'downloads')
+                    @if ($currentSection !== 'departments' && $currentSection !== 'explore' && $currentSection !== 'facilities' && $currentSection !== 'contact' && $currentSection !== 'training' && $currentSection !== 'downloads' && $currentSection !== 'alumni')
                         <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => $currentSection]) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit section details</span></a>
-                    @elseif ($currentSection === 'departments' || $currentSection === 'explore' || $currentSection === 'facilities' || $currentSection === 'extension' || $currentSection === 'training' || $currentSection === 'downloads' || $currentSection === 'faq' || $currentSection === 'scholarships')
+                    @elseif ($currentSection === 'departments' || $currentSection === 'explore' || $currentSection === 'facilities' || $currentSection === 'extension' || $currentSection === 'training' || $currentSection === 'downloads' || $currentSection === 'faq' || $currentSection === 'scholarships' || $currentSection === 'alumni')
                         <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => $currentSection]) }}" class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit section details</span></a>
                     @endif
                 </div>
@@ -616,7 +616,7 @@
                         {!! nl2br(e($content['body'] ?? '')) !!}
                     @elseif (!empty($content['body']))
                         {!! $content['body'] !!}
-                    @elseif ($currentSection === 'departments' || $currentSection === 'explore' || $currentSection === 'facilities')
+                    @elseif ($currentSection === 'departments' || $currentSection === 'explore' || $currentSection === 'facilities' || $currentSection === 'alumni')
                         <p class="text-muted">No description yet.</p>
                     @endif
                 </div>
@@ -830,7 +830,186 @@
                         </div>
                     </div>
                 @endif
-                
+
+                @if ($currentSection === 'alumni')
+                    <hr class="my-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h3 class="h5 mb-0 fw-600">College Alumni Roster</h3>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'alumni']) }}" class="btn btn-outline-secondary btn-sm">
+                                <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit details</span>
+                            </a>
+                            <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'alumni', 'edit' => 'add_alumnus']) }}" class="btn btn-admin-primary btn-sm">
+                                <i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Add alumni</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 align-items-center mb-3">
+                        <div class="col-md-8">
+                            <input
+                                type="search"
+                                id="collegeAlumniSearch"
+                                class="form-control"
+                                placeholder="Search alumni by name, batch, or description"
+                            >
+                        </div>
+                        <div class="col-md-4">
+                            <select id="collegeAlumniSort" class="form-select">
+                                <option value="recent_desc">Most Recent Added</option>
+                                <option value="name_asc">Name: A to Z</option>
+                                <option value="name_desc">Name: Z to A</option>
+                                <option value="year_desc">Batch Year: Desc</option>
+                                <option value="year_asc">Batch Year: Asc</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    @if($alumniList->count() === 0)
+                        <div class="border rounded p-4 text-center text-muted">
+                            <i class="bi bi-mortarboard fs-1 d-block mb-2 opacity-50"></i>
+                            No college alumni profiles added yet.
+                        </div>
+                    @else
+                        <ul class="list-group list-group-flush rounded border" id="collegeAlumniList">
+                            @foreach($alumniList as $item)
+                                <li
+                                    class="list-group-item p-4 position-relative college-alumni-item"
+                                    data-name="{{ strtolower($item->title ?? '') }}"
+                                    data-year="{{ strtolower($item->year_graduated ?? '') }}"
+                                    data-description="{{ strtolower(trim(strip_tags($item->description ?? ''))) }}"
+                                    data-created="{{ optional($item->created_at)->timestamp ?? 0 }}"
+                                >
+                                    <div class="position-absolute top-0 end-0 m-3 d-flex gap-2">
+                                        @if($item->department)
+                                            <a href="{{ route('admin.colleges.edit-department-alumnus', ['college' => $collegeSlug, 'department' => $item->department, 'alumnus' => $item->getRouteKey()]) }}" class="btn btn-sm btn-outline-primary bg-white shadow-sm" title="Edit in department">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <form action="{{ route('admin.colleges.destroy-alumnus', ['college' => $collegeSlug, 'department' => $item->department, 'alumnus' => $item->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this alumni profile?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger bg-white shadow-sm" title="Remove">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'alumni', 'edit' => 'edit_alumnus', 'alumnus_id' => $item->getRouteKey()]) }}" class="btn btn-sm btn-outline-primary bg-white shadow-sm" title="Edit">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </a>
+                                            <form action="{{ route('admin.colleges.destroy-college-alumnus', ['college' => $collegeSlug, 'alumnus' => $item->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this alumni profile?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="btn btn-sm btn-outline-danger bg-white shadow-sm" title="Remove">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                    <div class="d-flex flex-column flex-sm-row gap-4 align-items-center align-items-sm-start">
+                                        @if(!empty($item->image))
+                                            <div style="width: 100px; height: 100px; flex-shrink: 0;">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item->image) }}" class="rounded-circle w-100 h-100 object-fit-cover shadow-sm" alt="{{ $item->title }}">
+                                            </div>
+                                        @else
+                                            <div style="width: 100px; height: 100px; flex-shrink: 0;" class="bg-light border rounded-circle d-flex align-items-center justify-content-center shadow-sm">
+                                                <i class="fas fa-user text-muted fs-3"></i>
+                                            </div>
+                                        @endif
+                                        <div class="text-center text-sm-start flex-grow-1">
+                                            <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-baseline gap-2 mb-2">
+                                                <h5 class="fw-bold mb-0 text-dark">{{ $item->title }}</h5>
+                                                @if(!empty($item->year_graduated))
+                                                    <span class="badge bg-secondary">{{ $item->year_graduated }}</span>
+                                                @endif
+                                            </div>
+                                            <div class="text-muted small mb-2">
+                                                {{ $item->department?->name ?? $collegeName }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
+                        <div id="collegeAlumniEmptyState" class="text-muted fst-italic p-4 border rounded-bottom d-none">No alumni match your search.</div>
+                        @if($alumniList instanceof \Illuminate\Contracts\Pagination\Paginator && $alumniList->hasPages())
+                            <div class="mt-3 d-flex justify-content-center">
+                                {{ $alumniList->links() }}
+                            </div>
+                        @endif
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const searchInput = document.getElementById('collegeAlumniSearch');
+                                const sortSelect = document.getElementById('collegeAlumniSort');
+                                const list = document.getElementById('collegeAlumniList');
+                                const emptyState = document.getElementById('collegeAlumniEmptyState');
+                                if (!searchInput || !sortSelect || !list) return;
+
+                                const getYearValue = (value) => {
+                                    const match = String(value || '').match(/\d{4}/);
+                                    return match ? parseInt(match[0], 10) : Number.NEGATIVE_INFINITY;
+                                };
+
+                                const sortItems = () => {
+                                    const items = Array.from(list.querySelectorAll('.college-alumni-item'));
+                                    const sortMode = sortSelect.value;
+                                    items.sort((a, b) => {
+                                        const aName = a.dataset.name || '';
+                                        const bName = b.dataset.name || '';
+                                        const aYear = getYearValue(a.dataset.year);
+                                        const bYear = getYearValue(b.dataset.year);
+                                        const aCreated = parseInt(a.dataset.created || '0', 10);
+                                        const bCreated = parseInt(b.dataset.created || '0', 10);
+
+                                        switch (sortMode) {
+                                            case 'name_asc':
+                                                return aName.localeCompare(bName);
+                                            case 'name_desc':
+                                                return bName.localeCompare(aName);
+                                            case 'year_asc':
+                                                return aYear - bYear || aName.localeCompare(bName);
+                                            case 'year_desc':
+                                                return bYear - aYear || aName.localeCompare(bName);
+                                            case 'recent_desc':
+                                            default:
+                                                return bCreated - aCreated || aName.localeCompare(bName);
+                                        }
+                                    });
+
+                                    items.forEach((item) => list.appendChild(item));
+                                };
+
+                                const filterItems = () => {
+                                    const query = searchInput.value.trim().toLowerCase();
+                                    let visibleCount = 0;
+                                    list.querySelectorAll('.college-alumni-item').forEach((item) => {
+                                        const haystack = [
+                                            item.dataset.name || '',
+                                            item.dataset.year || '',
+                                            item.dataset.description || '',
+                                        ].join(' ');
+                                        const matches = !query || haystack.includes(query);
+                                        item.classList.toggle('d-none', !matches);
+                                        if (matches) visibleCount++;
+                                    });
+
+                                    if (emptyState) {
+                                        emptyState.classList.toggle('d-none', visibleCount > 0);
+                                    }
+                                };
+
+                                const refreshRoster = () => {
+                                    sortItems();
+                                    filterItems();
+                                };
+
+                                searchInput.addEventListener('input', filterItems);
+                                sortSelect.addEventListener('change', refreshRoster);
+                                refreshRoster();
+                            });
+                        </script>
+                    @endif
+                @endif
+
                 @if ($currentSection === 'training')
                     <div class="colleges-detail">
                         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">

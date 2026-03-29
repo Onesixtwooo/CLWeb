@@ -11,6 +11,10 @@
         $isOverviewEdit = $editMode === 'overview';
         $isRetroEdit = $editMode === 'retro';
         $isFeaturedVideoEdit = $editMode === 'featured_video';
+        $isAlumniSection = $sectionSlug === 'alumni';
+        $isAlumniDetailsEdit = $isAlumniSection && ($editMode === null || $editMode === 'alumni_details');
+        $isAddCollegeAlumnus = $isAlumniSection && $editMode === 'add_alumnus';
+        $isEditCollegeAlumnus = $isAlumniSection && $editMode === 'edit_alumnus';
         $isExtensionEdit = $sectionSlug === 'extension';
         $isTrainingEdit = $sectionSlug === 'training';
         $isScholarshipsEdit = $sectionSlug === 'scholarships';
@@ -20,6 +24,10 @@
             $pageTitle = !empty($content->id) ? 'Edit Retro Item' : 'Add Retro Item';
         } elseif ($isFeaturedVideoEdit) {
             $pageTitle = 'Edit Featured Video';
+        } elseif ($isAddCollegeAlumnus) {
+            $pageTitle = 'Add Alumni Profile';
+        } elseif ($isEditCollegeAlumnus) {
+            $pageTitle = 'Edit Alumni Profile';
         } elseif ($isExtensionEdit) {
              $pageTitle = 'Edit Extension';
         } elseif ($isTrainingEdit) {
@@ -47,7 +55,7 @@
                 @endif
                 
                 <div class="row g-3">
-                    @if (!$isRetroEdit)
+                    @if (!$isRetroEdit && !($isAlumniSection && ($isAddCollegeAlumnus || $isEditCollegeAlumnus)))
                         <div class="col-12 mb-3">
                             <div class="form-check form-switch">
                                 <input class="form-check-input" type="checkbox" id="is_visible" name="is_visible" value="1" {{ old('is_visible', $content?->is_visible ?? true) ? 'checked' : '' }}>
@@ -55,6 +63,15 @@
                             </div>
                             <small class="text-muted">Toggle to show or hide this section on the college page.</small>
                         </div>
+                    @endif
+
+                    @if ($isAlumniSection)
+                        @php
+                            $editingCollegeAlumnus = null;
+                            if ($isEditCollegeAlumnus && request()->query('alumnus_id')) {
+                                $editingCollegeAlumnus = \App\Models\DepartmentAlumnus::findByCollegeAndRouteKey($collegeSlug, request()->query('alumnus_id'));
+                            }
+                        @endphp
                     @endif
 
                     @if ($isFeaturedVideoEdit)
@@ -236,6 +253,52 @@
                             <label for="body" class="form-label">Section Description</label>
                             <textarea name="body" id="body" class="form-control quill-editor" rows="4" placeholder="Describe this section...">{{ old('body', $content->body ?? '') }}</textarea>
                             <small class="text-muted">This description appears below the title on the public college page.</small>
+                        </div>
+                    @elseif ($isAlumniDetailsEdit)
+                        <input type="hidden" name="_edit_mode" value="alumni_details">
+                        <div class="col-12">
+                            <label for="title" class="form-label">Section Title</label>
+                            <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $content->title ?? ($sectionName ?? 'Alumni')) }}" placeholder="Alumni">
+                            <small class="text-muted">This title appears above the college alumni section on the public page.</small>
+                        </div>
+                        <div class="col-12">
+                            <label for="body" class="form-label">Section Description</label>
+                            <textarea name="body" id="body" class="form-control quill-editor" rows="4" placeholder="Describe this section...">{{ old('body', $content->body ?? '') }}</textarea>
+                            <small class="text-muted">Use this area to introduce your featured college alumni.</small>
+                        </div>
+                    @elseif ($isAddCollegeAlumnus || $isEditCollegeAlumnus)
+                        <input type="hidden" name="_edit_mode" value="{{ $isEditCollegeAlumnus ? 'edit_alumnus' : 'add_alumnus' }}">
+                        @if ($isEditCollegeAlumnus && $editingCollegeAlumnus)
+                            <input type="hidden" name="editing_alumnus_id" value="{{ $editingCollegeAlumnus->id }}">
+                        @endif
+                        <div class="col-md-8">
+                            <label for="title" class="form-label">Full Name</label>
+                            <input type="text" name="title" id="title" class="form-control" value="{{ old('title', $editingCollegeAlumnus->title ?? '') }}" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="year_graduated" class="form-label">Year Graduated / Batch</label>
+                            <input type="text" name="year_graduated" id="year_graduated" class="form-control" value="{{ old('year_graduated', $editingCollegeAlumnus->year_graduated ?? '') }}" placeholder="e.g. 2024">
+                        </div>
+                        <div class="col-12">
+                            <label for="description" class="form-label">Description / Achievement</label>
+                            <textarea name="description" id="description" class="form-control quill-editor" rows="6">{{ old('description', $editingCollegeAlumnus->description ?? '') }}</textarea>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="image" class="form-label">Profile Photo</label>
+                            <input type="file" name="image" id="image" class="form-control" accept="image/*">
+                            <small class="text-muted">Recommended: square photo for best display.</small>
+                        </div>
+                        <div class="col-md-6">
+                            @if ($isEditCollegeAlumnus && $editingCollegeAlumnus && !empty($editingCollegeAlumnus->image))
+                                <label class="form-label d-block">Current Photo</label>
+                                <div class="d-flex align-items-start gap-3">
+                                    <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($editingCollegeAlumnus->image) }}" alt="{{ $editingCollegeAlumnus->title }}" class="rounded-circle border shadow-sm" style="width: 96px; height: 96px; object-fit: cover;">
+                                    <div class="form-check mt-2">
+                                        <input class="form-check-input" type="checkbox" id="remove_image" name="remove_image" value="1">
+                                        <label class="form-check-label" for="remove_image">Remove current photo</label>
+                                    </div>
+                                </div>
+                            @endif
                         </div>
                     @else
                         {{-- DEFAULT EDITOR --}}

@@ -4,7 +4,15 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig(({ mode }) => {
     const env = loadEnv(mode, process.cwd(), '')
-    const hmrHost = env.VITE_HMR_HOST || '192.168.254.102'
+    const appUrl = env.APP_URL || 'http://localhost:8001'
+    const appHost = (() => {
+        try {
+            return new URL(appUrl).hostname
+        } catch {
+            return 'localhost'
+        }
+    })()
+    const hmrHost = env.VITE_HMR_HOST || appHost
     const hmrPort = Number(env.VITE_HMR_PORT || 5173)
     const hmrProtocol = env.VITE_HMR_PROTOCOL || 'ws'
     const originProtocol = hmrProtocol === 'wss' ? 'https' : 'http'

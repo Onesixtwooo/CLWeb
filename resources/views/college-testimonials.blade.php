@@ -28,69 +28,87 @@
     <!-- Styles -->
     @include('includes.college-css')
     <style>
+        .testimonial-grid {
+            align-items: stretch;
+        }
         .testimonial-card {
-            background: #ffffff;
-            border-radius: 20px;
+            --testimonial-primary: {{ $headerColor }};
+            --testimonial-accent: {{ $accentColor }};
+            background:
+                linear-gradient(160deg, color-mix(in srgb, var(--testimonial-primary) 78%, white 22%) 0%, var(--testimonial-primary) 52%, color-mix(in srgb, var(--testimonial-accent) 82%, black 18%) 100%);
+            border-radius: 28px;
             overflow: hidden;
             border: 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 22px 46px rgba(15, 23, 42, 0.18);
             height: 100%;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
+            isolation: isolate;
         }
         .testimonial-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-6px);
+            box-shadow: 0 28px 56px rgba(15, 23, 42, 0.24);
         }
-        .testimonial-glow {
+        .testimonial-card::before {
+            content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: {{ $headerColor }};
+            inset: 0;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 46%);
+            pointer-events: none;
+            z-index: -1;
         }
         .testimonial-body {
-            padding: 2.5rem;
-        }
-        .testimonial-quote {
-            font-family: 'Buttershine Serif', serif;
-            font-size: 1.25rem;
-            color: #2d3748;
-            line-height: 1.6;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-        .testimonial-quote::before {
-            content: '"';
-            position: absolute;
-            top: -20px;
-            left: -15px;
-            font-size: 4rem;
-            color: rgba(0,0,0,0.05);
-            font-family: serif;
+            padding: 2rem;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
         .testimonial-author {
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 1.1rem;
         }
         .author-photo {
-            width: 60px;
-            height: 60px;
+            width: 74px;
+            height: 74px;
             border-radius: 50%;
             object-fit: cover;
-            border: 3px solid #f8f9fa;
+            border: 4px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.26);
+            flex-shrink: 0;
         }
         .author-info h4 {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
-            margin-bottom: 0.1rem;
-            color: #1a202c;
+            margin-bottom: 0.2rem;
+            color: #ffffff;
+            letter-spacing: 0.01em;
         }
         .author-info p {
-            font-size: 0.85rem;
-            color: #718096;
+            font-size: 0.92rem;
+            color: rgba(255, 255, 255, 0.78);
+            margin-bottom: 0.2rem;
+        }
+        .author-info p:last-child {
             margin-bottom: 0;
+        }
+        .author-photo-placeholder {
+            background: rgba(255, 255, 255, 0.16);
+            color: #ffffff;
+            font-weight: 800;
+            font-size: 1.5rem;
+        }
+        @media (max-width: 767.98px) {
+            .testimonial-body {
+                padding: 1.6rem;
+            }
+            .author-photo {
+                width: 64px;
+                height: 64px;
+            }
         }
     </style>
 </head>
@@ -123,26 +141,22 @@
                         <a href="{{ route('college.show', $collegeSlug) }}" class="btn rounded-pill px-5 py-3 fw-700 shadow-sm" style="background: {{ $headerColor }}; color: white; border: none;">Back to {{ $collegeShortName }} Home</a>
                     </div>
                 @else
-                    <div class="row g-4">
+                    <div class="row g-4 testimonial-grid">
                         @foreach($testimonials as $testimonial)
                             <div class="col-md-6 col-lg-4">
                                 <div class="testimonial-card">
-                                    <div class="testimonial-glow"></div>
                                     <div class="testimonial-body">
-                                        <div class="testimonial-quote">
-                                            {!! $testimonial->description !!}
-                                        </div>
                                         <div class="testimonial-author">
                                             @if($testimonial->image)
-                                                <img src="{{ asset($testimonial->image) }}" alt="{{ $testimonial->title }}" class="author-photo">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($testimonial->image) }}" alt="{{ $testimonial->title }}" class="author-photo">
                                             @else
-                                                <div class="author-photo bg-secondary d-flex align-items-center justify-content-center text-white p-3 fs-5">
+                                                <div class="author-photo author-photo-placeholder d-flex align-items-center justify-content-center">
                                                     {{ substr($testimonial->title, 0, 1) }}
                                                 </div>
                                             @endif
                                             <div class="author-info">
                                                 <h4>{{ $testimonial->title }}</h4>
-                                                <p>{{ $testimonial->department->name ?? 'CLSU' }}</p>
+                                                <p>{{ $testimonial->department->name ?? $collegeName }}</p>
                                                 @if($testimonial->year_graduated)
                                                     <p class="small">{{ $testimonial->year_graduated }}</p>
                                                 @endif
@@ -153,6 +167,11 @@
                             </div>
                         @endforeach
                     </div>
+                    @if($testimonials->hasPages())
+                        <div class="mt-5 d-flex justify-content-center">
+                            {{ $testimonials->links() }}
+                        </div>
+                    @endif
                 @endif
             </div>
         </section>

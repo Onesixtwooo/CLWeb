@@ -283,6 +283,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::delete('colleges/{college}/departments/{department}/partners/{partner}', [CollegeController::class, 'destroyLinkagePartner'])->name('colleges.destroy-linkage-partner');
         Route::delete('colleges/{college}/departments/{department}/facilities/{facility}', [CollegeController::class, 'destroyFacilityItem'])->name('colleges.destroy-facility-item');
         Route::delete('colleges/{college}/departments/{department}/alumni/{alumnus}', [CollegeController::class, 'destroyAlumnus'])->name('colleges.destroy-alumnus');
+        Route::delete('colleges/{college}/alumni/{alumnus}', [CollegeController::class, 'destroyCollegeAlumnus'])->name('colleges.destroy-college-alumnus');
 
         // Institute-level show/edit
         Route::get('colleges/{college}/institutes/{institute}', [CollegeController::class, 'showInstitute'])->name('colleges.show-institute');

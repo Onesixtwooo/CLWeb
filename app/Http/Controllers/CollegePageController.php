@@ -258,6 +258,26 @@ class CollegePageController extends Controller
             ->where('section_slug', 'accreditation')
             ->first();
 
+        $alumniSection = \App\Models\CollegeSection::query()
+            ->where('college_slug', $college)
+            ->where('section_slug', 'alumni')
+            ->first();
+
+        $alumniPreview = \App\Models\DepartmentAlumnus::with('department')
+            ->where(function ($query) use ($college) {
+                $query->where(function ($directQuery) use ($college) {
+                    $directQuery->where('college_slug', $college)
+                        ->whereNull('department_id')
+                        ->whereNull('institute_id');
+                })->orWhereHas('department', function ($departmentQuery) use ($college) {
+                    $departmentQuery->where('college_slug', $college)
+                        ->where('alumni_is_visible', true);
+                });
+            })
+            ->latest()
+            ->limit(3)
+            ->get();
+
         return view('college-blade', [
             'collegeName' => $collegeName,
             'collegeSlug' => $college,
@@ -293,12 +313,8 @@ class CollegePageController extends Controller
             'scholarships' => $scholarships,
             'showPrimaryRetroBtn' => $showPrimaryRetroBtn,
             'showSecondaryRetroBtn' => $showSecondaryRetroBtn,
-            'testimonialPreview' => \App\Models\DepartmentAlumnus::whereHas('department', function ($query) use ($college) {
-                    $query->where('college_slug', $college)->where('alumni_is_visible', true);
-                })
-                ->orderBy('sort_order')
-                ->limit(3)
-                ->get(),
+            'alumniSection' => $alumniSection,
+            'testimonialPreview' => $alumniPreview,
             'accreditationPreview' => \App\Models\CollegeAccreditation::where('college_slug', $college)
                 ->where('is_visible', true)
                 ->orderBy('sort_order')
@@ -993,12 +1009,20 @@ class CollegePageController extends Controller
             ?? Setting::get('admin_sidebar_color_' . $college . '_editor', null)
             ?? SettingsController::SIDEBAR_COLOR_DEFAULT;
 
-        $testimonials = \App\Models\DepartmentAlumnus::whereHas('department', function ($query) use ($college) {
-                $query->where('college_slug', $college)->where('alumni_is_visible', true);
+        $testimonials = \App\Models\DepartmentAlumnus::where(function ($query) use ($college) {
+                $query->where(function ($directQuery) use ($college) {
+                    $directQuery->where('college_slug', $college)
+                        ->whereNull('department_id')
+                        ->whereNull('institute_id');
+                })->orWhereHas('department', function ($departmentQuery) use ($college) {
+                    $departmentQuery->where('college_slug', $college)
+                        ->where('alumni_is_visible', true);
+                });
             })
             ->with('department')
-            ->orderBy('sort_order')
-            ->get();
+            ->latest()
+            ->paginate(5)
+            ->withQueryString();
 
         return view('college-testimonials', [
             'collegeName' => $collegeName,

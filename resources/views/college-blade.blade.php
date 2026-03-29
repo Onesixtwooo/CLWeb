@@ -96,7 +96,66 @@
                 font-size: 1.25rem;
             }
         }
-
+        .college-testimonial-card {
+            display: flex;
+            flex-direction: column;
+            min-height: 100%;
+            padding: 1.5rem;
+            border: 0;
+            border-radius: 24px;
+            overflow: hidden;
+            color: #ffffff;
+            background:
+                radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 30%),
+                linear-gradient(
+                    160deg,
+                    color-mix(in srgb, {{ $headerColor }} 82%, #ffffff 18%) 0%,
+                    {{ $headerColor }} 56%,
+                    color-mix(in srgb, {{ $accentColor }} 84%, #0f172a 16%) 100%
+                );
+            box-shadow: 0 20px 42px rgba(15, 23, 42, 0.16);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+        }
+        .college-testimonial-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 28px 52px rgba(15, 23, 42, 0.22);
+        }
+        .college-testimonial-header {
+            display: flex;
+            align-items: center;
+            gap: 0.95rem;
+            margin-bottom: 1.1rem;
+        }
+        .college-testimonial-avatar {
+            width: 62px;
+            height: 62px;
+            border-radius: 50%;
+            object-fit: cover;
+            flex-shrink: 0;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 10px 24px rgba(15, 23, 42, 0.2);
+            background: rgba(255, 255, 255, 0.12);
+        }
+        .college-testimonial-avatar-placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .college-testimonial-name {
+            margin: 0;
+            font-size: 1.08rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .college-testimonial-meta {
+            margin: 0.15rem 0 0;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.92rem;
+            line-height: 1.45;
+        }
         /* About Section Carousel Styles */
         .college-about-media .carousel {
             border-radius: 12px;
@@ -1049,40 +1108,44 @@
     @endif
 
     <!-- Testimonials Section -->
-    @if(isset($testimonialPreview) && $testimonialPreview->isNotEmpty())
+    @if(($alumniSection?->is_visible ?? true) && isset($testimonialPreview) && $testimonialPreview->isNotEmpty())
     <section id="testimonials" class="py-5" style="background: #ffffff;">
         <div class="container">
             <div class="section-header text-center mb-5">
-                <span class="section-badge retro-label college-theme" style="padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; align-self: center; width: fit-content;">Testimonials</span>
-                <h2 class="retro-section-title mt-3">What They Say</h2>
-                <p class="retro-section-text mx-auto mt-2">Voices from our {{ $collegeShortName }} community.</p>
+                <span class="section-badge retro-label college-theme" style="padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; align-self: center; width: fit-content;">{{ $alumniSection->title ?? 'Alumni' }}</span>
+                <h2 class="retro-section-title mt-3">{{ $alumniSection->title ?? 'What They Say' }}</h2>
+                <div class="retro-section-text mx-auto mt-2">
+                    {!! $alumniSection->body ?? ('Voices from our ' . e($collegeShortName) . ' community.') !!}
+                </div>
             </div>
 
             <div class="row g-4">
                 @foreach($testimonialPreview as $testimonial)
                     <div class="col-md-4">
-                        <div class="testimonial-card p-4 rounded-4 shadow-sm border-0 h-100" style="background: #f8f9fa;">
-                            <div class="d-flex align-items-center gap-3 mb-3">
+                        <div class="college-testimonial-card h-100">
+                            <div class="college-testimonial-header">
                                 @if($testimonial->image)
-                                    <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($testimonial->image) }}" alt="" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                                    <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($testimonial->image) }}" alt="{{ $testimonial->title }}" class="college-testimonial-avatar">
                                 @else
-                                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white" style="width: 50px; height: 50px;">
+                                    <div class="college-testimonial-avatar college-testimonial-avatar-placeholder">
                                         {{ substr($testimonial->title, 0, 1) }}
                                     </div>
                                 @endif
                                 <div>
-                                    <h5 class="mb-0 fw-700" style="font-size: 1rem;">{{ $testimonial->title }}</h5>
-                                    <small class="text-muted">{{ $testimonial->department->name ?? 'CLSU' }}</small>
+                                    <h5 class="college-testimonial-name">{{ $testimonial->title }}</h5>
+                                    <p class="college-testimonial-meta">{{ $testimonial->department->name ?? $collegeName }}</p>
+                                    @if($testimonial->year_graduated)
+                                        <p class="college-testimonial-meta">Class of {{ $testimonial->year_graduated }}</p>
+                                    @endif
                                 </div>
                             </div>
-                            <div class="mb-0 text-dark" style="font-style: italic; line-height: 1.6; font-size: 0.95rem;">{!! $testimonial->description !!}</div>
                         </div>
                     </div>
                 @endforeach
             </div>
 
             <div class="text-center mt-5">
-                <a href="{{ route('college.testimonials', $collegeSlug) }}" class="btn retro-button-outline" style="border-color: {{ $headerColor }}; color: {{ $headerColor }};">View All Stories →</a>
+                <a href="{{ route('college.testimonials', $collegeSlug) }}" class="btn retro-button-outline" style="border-color: {{ $headerColor }}; color: {{ $headerColor }};">View All Alumni →</a>
             </div>
         </div>
     </section>

@@ -89,8 +89,8 @@ class CollegeController extends Controller
             'departments' => 'Departments',
             'institutes' => 'Institutes',
             'facilities' => 'Facilities',
-
             'faculty' => 'Faculty',
+            'alumni' => 'Alumni',
             'admissions' => 'Admissions',
             'faq' => 'FAQs',
             'extension' => 'Extension',
@@ -386,6 +386,22 @@ class CollegeController extends Controller
             ? \App\Models\CollegeTestimonial::where('college_slug', $college)->orderBy('sort_order')->get()
             : collect();
 
+        $alumniList = $section === 'alumni'
+            ? \App\Models\DepartmentAlumnus::with('department')
+                ->where(function ($query) use ($college) {
+                    $query->where(function ($directQuery) use ($college) {
+                        $directQuery->where('college_slug', $college)
+                            ->whereNull('department_id')
+                            ->whereNull('institute_id');
+                    })->orWhereHas('department', function ($departmentQuery) use ($college) {
+                        $departmentQuery->where('college_slug', $college);
+                    });
+                })
+                ->latest()
+                ->paginate(5, ['*'], 'alumni_page')
+                ->withQueryString()
+            : collect();
+
         $accreditationList = $section === 'accreditation'
             ? \App\Models\CollegeAccreditation::where('college_slug', $college)->with('program')->orderBy('sort_order')->get()
             : collect();
@@ -472,6 +488,16 @@ class CollegeController extends Controller
         $hasInstitutes = \App\Models\CollegeInstitute::where('college_slug', $college)->exists();
         $hasFaqs = \App\Models\CollegeFaq::where('college_slug', $college)->exists();
         $hasTestimonials = \App\Models\CollegeTestimonial::where('college_slug', $college)->exists();
+        $hasAlumni = \App\Models\DepartmentAlumnus::where(function ($query) use ($college) {
+                $query->where(function ($directQuery) use ($college) {
+                    $directQuery->where('college_slug', $college)
+                        ->whereNull('department_id')
+                        ->whereNull('institute_id');
+                })->orWhereHas('department', function ($departmentQuery) use ($college) {
+                    $departmentQuery->where('college_slug', $college);
+                });
+            })
+            ->exists();
         $hasExtensions = CollegeExtension::where('college_slug', $college)->exists();
         $hasTrainings = CollegeTraining::where('college_slug', $college)->exists();
         $hasDownloads = CollegeDownload::where('college_slug', $college)->exists();
@@ -489,6 +515,7 @@ class CollegeController extends Controller
                 $isFilled = match ($sSlug) {
                     'departments' => $hasDepartments,
                     'faculty' => $hasFaculty,
+                    'alumni' => $hasAlumni,
                     'facilities' => $hasFacilities,
                     'institutes' => $hasInstitutes,
                     'faq' => $hasFaqs,
@@ -523,6 +550,7 @@ class CollegeController extends Controller
             'instituteList' => $instituteList,
             'faqList' => $faqList,
             'testimonialList' => $testimonialList,
+            'alumniList' => $alumniList,
             'accreditationList' => $accreditationList,
             'membershipList' => $membershipList,
             'organizationList' => $organizationList,
@@ -3368,6 +3396,34 @@ class CollegeController extends Controller
         ])->with('success', 'Alumnus removed successfully.');
     }
 
+    public function destroyCollegeAlumnus(Request $request, string $college, int $alumnus): RedirectResponse
+    {
+        $colleges = self::getColleges();
+        if (! isset($colleges[$college])) {
+            abort(404, 'College not found.');
+        }
+        $user = $request->user();
+        if ($user && ! $user->canAccessCollege($college)) {
+            abort(403, 'You do not have access to this college.');
+        }
+
+        $alumnusModel = DepartmentAlumnus::where('college_slug', $college)
+            ->whereNull('department_id')
+            ->whereNull('institute_id')
+            ->findOrFail($alumnus);
+
+        if (! empty($alumnusModel->image) && \Illuminate\Support\Facades\Storage::disk('google')->exists($alumnusModel->image)) {
+            \Illuminate\Support\Facades\Storage::disk('google')->delete($alumnusModel->image);
+        }
+
+        $alumnusModel->delete();
+
+        return redirect()->route('admin.colleges.show', [
+            'college' => $college,
+            'section' => 'alumni'
+        ])->with('success', 'Alumnus removed successfully.');
+    }
+
     public function update(Request $request, string $college, string $section): RedirectResponse
     {
         $colleges = self::getColleges();
@@ -3764,6 +3820,97 @@ class CollegeController extends Controller
                 ->with('success', 'Scholarships section updated successfully.');
         }
 
+        if ($section === 'alumni') {
+            if ($editMode === 'alumni_details') {
+                $data = $request->validate([
+                    'title' => ['required', 'string', 'max:255'],
+                    'body' => ['nullable', 'string'],
+                    'is_visible' => ['nullable'],
+                ]);
+
+                $existingSection = CollegeSection::where('college_slug', $college)
+                    ->where('section_slug', $section)
+                    ->first();
+
+                CollegeSection::updateOrCreate(
+                    [
+                        'college_slug' => $college,
+                        'section_slug' => $section,
+                    ],
+                    [
+                        'title' => $data['title'],
+                        'body' => $data['body'] ?? ($existingSection->body ?? ''),
+                        'meta' => $existingSection->meta ?? [],
+                        'is_visible' => $request->has('is_visible'),
+                    ]
+                );
+
+                return redirect()
+                    ->route('admin.colleges.show', ['college' => $college, 'section' => $section])
+                    ->with('success', 'Alumni section details updated successfully.');
+            }
+
+            if ($editMode === 'add_alumnus' || $editMode === 'edit_alumnus') {
+                $data = $request->validate([
+                    'editing_alumnus_id' => ['nullable', 'integer'],
+                    'title' => ['required', 'string', 'max:255'],
+                    'year_graduated' => ['nullable', 'string', 'max:255'],
+                    'description' => ['nullable', 'string'],
+                    'image' => ['nullable', 'image', 'max:2048'],
+                    'remove_image' => ['nullable'],
+                ]);
+
+                $alumnus = $request->filled('editing_alumnus_id')
+                    ? DepartmentAlumnus::where('college_slug', $college)
+                        ->whereNull('department_id')
+                        ->whereNull('institute_id')
+                        ->findOrFail($request->input('editing_alumnus_id'))
+                    : new DepartmentAlumnus([
+                        'college_slug' => $college,
+                        'department_id' => null,
+                        'institute_id' => null,
+                    ]);
+
+                $imagePath = $alumnus->image;
+
+                if ($request->boolean('remove_image')) {
+                    $imagePath = null;
+                }
+
+                if ($request->hasFile('image')) {
+                    $file = $request->file('image');
+                    $filename = time() . '_college_alumni_' . Str::random(10) . '.' . $file->getClientOriginalExtension();
+                    $storedPath = \Illuminate\Support\Facades\Storage::disk('google')->putFileAs(
+                        "colleges/{$college}/alumni/" . Str::slug($data['title']),
+                        $file,
+                        $filename
+                    );
+                    $imagePath = $storedPath ? \Illuminate\Support\Facades\Storage::disk('google')->url($storedPath) : $imagePath;
+                }
+
+                $alumnus->fill([
+                    'college_slug' => $college,
+                    'department_id' => null,
+                    'institute_id' => null,
+                    'title' => $data['title'],
+                    'year_graduated' => $data['year_graduated'] ?? null,
+                    'description' => $data['description'] ?? '',
+                    'image' => $imagePath,
+                    'sort_order' => $alumnus->exists
+                        ? $alumnus->sort_order
+                        : ((int) DepartmentAlumnus::where('college_slug', $college)
+                            ->whereNull('department_id')
+                            ->whereNull('institute_id')
+                            ->max('sort_order') + 1),
+                ]);
+                $alumnus->save();
+
+                return redirect()
+                    ->route('admin.colleges.show', ['college' => $college, 'section' => $section])
+                    ->with('success', $request->filled('editing_alumnus_id') ? 'Alumnus updated successfully.' : 'Alumnus added successfully.');
+            }
+        }
+
         // General section validation (for non-video, non-retro saves)
         $rules = [
             'title' => ['required', 'string', 'max:255'],
@@ -4077,6 +4224,10 @@ class CollegeController extends Controller
             'faculty' => [
                 'title' => 'Faculty',
                 'body' => '<p>Faculty and staff of ' . e($collegeName) . '.</p><p>Overview of faculty profile, research areas, and contact. Detailed roster can be managed in this section.</p>',
+            ],
+            'alumni' => [
+                'title' => 'Alumni',
+                'body' => '<p>Outstanding alumni of ' . e($collegeName) . '.</p><p>Highlight notable graduates, their achievements, and the stories that inspire current students.</p>',
             ],
             'downloads' => [
                 'title' => 'Downloads',

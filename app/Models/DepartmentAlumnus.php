@@ -11,6 +11,7 @@ class DepartmentAlumnus extends Model
     protected $table = 'department_alumni';
 
     protected $fillable = [
+        'college_slug',
         'department_id',
         'institute_id',
         'title',
@@ -28,6 +29,25 @@ class DepartmentAlumnus extends Model
     public static function findByDepartmentAndRouteKey(int $departmentId, string|int $value): ?self
     {
         $query = static::where('department_id', $departmentId);
+
+        if (is_numeric($value)) {
+            return (clone $query)->find((int) $value);
+        }
+
+        $routeKey = trim((string) $value);
+
+        return (clone $query)
+            ->get()
+            ->first(function (self $alumnus) use ($routeKey) {
+                return $alumnus->title === $routeKey || Str::slug($alumnus->title) === $routeKey;
+            });
+    }
+
+    public static function findByCollegeAndRouteKey(string $collegeSlug, string|int $value): ?self
+    {
+        $query = static::where('college_slug', $collegeSlug)
+            ->whereNull('department_id')
+            ->whereNull('institute_id');
 
         if (is_numeric($value)) {
             return (clone $query)->find((int) $value);
