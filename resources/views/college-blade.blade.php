@@ -368,9 +368,15 @@
         .featured-video-richtext {
             max-width: 800px;
             margin: 0.5rem auto 0;
+            width: 100%;
+            overflow-wrap: anywhere;
+            word-break: break-word;
         }
         .featured-video-richtext p:last-child {
             margin-bottom: 0;
+        }
+        .featured-video-richtext .ql-editor {
+            padding: 0 !important;
         }
         .featured-video-richtext img,
         .featured-video-richtext iframe,
@@ -808,7 +814,9 @@
                 <span class="section-badge retro-label college-theme" style="padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; align-self: center; width: fit-content;">Watch</span>
                 <h2 class="retro-section-title mt-3">{{ $featuredVideo->video_title ?: 'Featured Video' }}</h2>
                 @if($featuredVideo->video_description)
-                <div class="retro-section-text featured-video-richtext">{!! $featuredVideo->video_description !!}</div>
+                <div class="retro-section-text featured-video-richtext">
+                    <div class="ql-editor p-0">{!! html_entity_decode($featuredVideo->video_description) !!}</div>
+                </div>
                 @else
                 <p class="retro-section-text mx-auto mt-2">Highlights from {{ $collegeName }}—programs, facilities, and community.</p>
                 @endif

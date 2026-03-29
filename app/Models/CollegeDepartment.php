@@ -38,6 +38,8 @@ class CollegeDepartment extends Model
         'objectives_is_visible',
         'objectives_title',
         'objectives_body',
+        'curriculum_title',
+        'curriculum_body',
         'sort_order',
         'awards_is_visible',
         'research_is_visible',
@@ -268,6 +270,8 @@ class CollegeDepartment extends Model
             return [
                 'title' => $this->objectives_title ?? 'Objectives',
                 'body' => $this->objectives_body ?? '',
+                'curriculum_title' => $this->curriculum_title ?? 'Sample Courses',
+                'curriculum_body' => $this->curriculum_body ?? '',
                 'items' => $this->objectives->toArray(),
                 'curriculum' => $this->curricula->toArray(),
                 'is_visible' => (bool) ($this->objectives_is_visible ?? true),

@@ -4,77 +4,26 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="fw-bold mb-0">Curriculum (Sample Courses)</h4>
     </div>
-    <p class="text-muted small">Add categories (e.g., "Core Programming") and list courses one per line.</p>
-    
-    @php
-        $curriculum = $department->curricula ?? [];
-    @endphp
+    <p class="text-muted small">Update the curriculum section title and introductory details shown before the saved curriculum categories.</p>
 
-    <div id="curriculum-container">
-        @forelse($curriculum as $index => $category)
-            <div class="card mb-3 curriculum-item">
-                <div class="card-body">
-                    <div class="d-flex justify-content-end mb-2">
-                        <button type="button" class="btn btn-danger btn-sm remove-curriculum-btn">&times; Remove</button>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Category Title</label>
-                        <input type="text" name="curriculum[{{ $index }}][title]" class="form-control" value="{{ $category['title'] ?? '' }}" placeholder="e.g., Core Programming">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Courses</label>
-                        <textarea name="curriculum[{{ $index }}][courses]" class="form-control quill-editor" rows="10" placeholder="List courses here...">{{ is_array($category['courses']) ? implode("\n", $category['courses']) : ($category['courses'] ?? '') }}</textarea>
-                    </div>
-                </div>
-            </div>
-        @empty
-            {{-- Empty state --}}
-        @endforelse
+    <div class="mb-3">
+        <label for="curriculum_title" class="form-label">Section Title</label>
+        <input
+            type="text"
+            name="curriculum_title"
+            id="curriculum_title"
+            class="form-control"
+            value="{{ old('curriculum_title', $department->curriculum_title ?? 'Sample Courses') }}"
+            placeholder="e.g., Sample Courses">
     </div>
 
-    <button type="button" id="add-curriculum-btn" class="btn btn-outline-primary btn-sm">
-        + Add Curriculum Category
-    </button>
+    <div class="mb-4">
+        <label for="curriculum_body" class="form-label">Section Details</label>
+        <textarea
+            name="curriculum_body"
+            id="curriculum_body"
+            class="form-control quill-editor"
+            rows="5"
+            placeholder="Add a short description for the curriculum section...">{{ old('curriculum_body', $department->curriculum_body ?? '') }}</textarea>
+    </div>
 </div>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const container = document.getElementById('curriculum-container');
-        const addBtn = document.getElementById('add-curriculum-btn');
-        let activeIndex = {{ count($curriculum ?? []) }};
-
-        if (addBtn) {
-            addBtn.addEventListener('click', function() {
-                const template = `
-                    <div class="card mb-3 curriculum-item">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-end mb-2">
-                                <button type="button" class="btn btn-danger btn-sm remove-curriculum-btn">&times; Remove</button>
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Category Title</label>
-                                <input type="text" name="curriculum[${activeIndex}][title]" class="form-control" placeholder="e.g., Core Programming">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label">Courses</label>
-                                <textarea name="curriculum[${activeIndex}][courses]" class="form-control quill-editor" rows="10" placeholder="List courses here..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                `;
-                container.insertAdjacentHTML('beforeend', template);
-                activeIndex++;
-            });
-        }
-
-        if (container) {
-            container.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-curriculum-btn')) {
-                    if (confirm('Remove this category?')) {
-                        e.target.closest('.curriculum-item').remove();
-                    }
-                }
-            });
-        }
-    });
-</script>

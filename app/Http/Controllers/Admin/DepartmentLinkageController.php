@@ -121,12 +121,23 @@ class DepartmentLinkageController extends Controller
             ->with('success', 'Partner added successfully.');
     }
 
+    private function resolveLinkage(CollegeDepartment $department, string|int $linkage): DepartmentLinkage
+    {
+        $partner = DepartmentLinkage::findByDepartmentAndRouteKey($department->id, $linkage);
+
+        if (! $partner) {
+            abort(404, 'Partner not found.');
+        }
+
+        return $partner;
+    }
+
     /** GET /{college}/{department}/linkages/{linkage}/edit */
-    public function edit(Request $request, string $college, string $department, int $linkage): View
+    public function edit(Request $request, string $college, string $department, string $linkage): View
     {
         $colleges = self::getColleges();
         $dept     = $this->resolveDepartment($college, $department, $request);
-        $partner  = DepartmentLinkage::where('department_id', $dept->id)->findOrFail($linkage);
+        $partner  = $this->resolveLinkage($dept, $linkage);
 
         return view('admin.linkages.edit', [
             'college'    => $college,
@@ -137,10 +148,10 @@ class DepartmentLinkageController extends Controller
     }
 
     /** PUT /{college}/{department}/linkages/{linkage} */
-    public function update(Request $request, string $college, string $department, int $linkage): RedirectResponse
+    public function update(Request $request, string $college, string $department, string $linkage): RedirectResponse
     {
         $dept    = $this->resolveDepartment($college, $department, $request);
-        $partner = DepartmentLinkage::where('department_id', $dept->id)->findOrFail($linkage);
+        $partner = $this->resolveLinkage($dept, $linkage);
 
         $data = $request->validate([
             'name'        => ['required', 'string', 'max:255'],
@@ -171,10 +182,10 @@ class DepartmentLinkageController extends Controller
     }
 
     /** DELETE /{college}/{department}/linkages/{linkage} */
-    public function destroy(Request $request, string $college, string $department, int $linkage): RedirectResponse
+    public function destroy(Request $request, string $college, string $department, string $linkage): RedirectResponse
     {
         $dept    = $this->resolveDepartment($college, $department, $request);
-        $partner = DepartmentLinkage::where('department_id', $dept->id)->findOrFail($linkage);
+        $partner = $this->resolveLinkage($dept, $linkage);
         $partner->delete();
 
         return redirect()

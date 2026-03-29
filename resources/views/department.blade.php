@@ -1557,8 +1557,10 @@
                 @else
                     <div class="section-header mb-4 d-flex flex-column align-items-center text-center">
                         <span class="section-badge retro-label" style="background: {{ $headerColor }}; color: #ffffff; padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; width: fit-content;">Curriculum</span>
-                        <h2 class="retro-section-title mt-3">Sample Courses</h2>
-                        <p class="retro-section-text">A selection of key courses students may take in the {{ $department->name }} programs.</p>
+                        <h2 class="retro-section-title mt-3">{{ $department->curriculum_title ?: 'Sample Courses' }}</h2>
+                        <div class="retro-section-text">
+                            {!! $department->curriculum_body ?: 'A selection of key courses students may take in the ' . e($department->name) . ' programs.' !!}
+                        </div>
                     </div>
 
                     <div class="row gy-4">

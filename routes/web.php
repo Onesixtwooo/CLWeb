@@ -25,6 +25,10 @@ use App\Http\Controllers\Admin\UserController;
 use App\Models\Faculty;
 use Illuminate\Support\Facades\Route;
 
+Route::bind('faculty', function ($value) {
+    return Faculty::findByRouteKey($value) ?? abort(404, 'Faculty member not found.');
+});
+
 Route::get('/', [App\Http\Controllers\WelcomeController::class, 'index']);
 Route::get('media/proxy/{fileId}', [App\Http\Controllers\Admin\MediaController::class, 'proxy'])->where('fileId', '[a-zA-Z0-9\-_]+')->name('media.proxy.public');
 
@@ -130,6 +134,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('articles', ArticleController::class)->except(['show']);
         Route::resource('announcements', AnnouncementController::class)->except(['show']);
         Route::get('{college}/{department}/faculty/create', [FacultyController::class, 'createForDepartment'])->name('faculty.create-department');
+        Route::get('{college}/{department}/faculty/{faculty}/edit', [FacultyController::class, 'editForDepartment'])->name('faculty.edit-department');
         Route::get('{college}/faculty/create', [FacultyController::class, 'createForCollege'])->name('faculty.create-college');
         Route::resource('faculty', FacultyController::class)->except(['show', 'create']);
         Route::get('faculty/create', [FacultyController::class, 'create'])->name('faculty.create');
@@ -228,6 +233,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('colleges/{college}/{section?}', [CollegeController::class, 'show'])->name('colleges.show');
         Route::post('colleges/{college}/appearance', [CollegeController::class, 'updateAppearance'])->name('colleges.appearance.update');
         // Department-level show/edit
+        Route::get('{college}/{department}/objectives/curriculum/edit', [CollegeController::class, 'editDepartmentCurriculumSection'])->name('colleges.edit-department-curriculum-section');
         Route::get('{college}/{department}/objectives/curriculum/create', [CollegeController::class, 'createDepartmentCurriculum'])->name('colleges.create-department-curriculum');
         Route::get('{college}/{department}/objectives/curriculum/{curriculum}/edit', [CollegeController::class, 'editDepartmentCurriculum'])->name('colleges.edit-department-curriculum');
         Route::get('{college}/{department}/extension/items/create', [CollegeController::class, 'createDepartmentExtension'])->name('colleges.create-department-extension');

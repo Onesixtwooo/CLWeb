@@ -788,6 +788,13 @@ class CollegeController extends Controller
         return $this->editDepartmentSection($request, $college, $department, 'objectives');
     }
 
+    public function editDepartmentCurriculumSection(Request $request, string $college, string $department): View|RedirectResponse
+    {
+        $request->query->set('edit', 'curriculum');
+
+        return $this->editDepartmentSection($request, $college, $department, 'objectives');
+    }
+
     public function editDepartmentCurriculum(Request $request, string $college, string $department, string $curriculum): View|RedirectResponse
     {
         $request->query->set('edit', 'edit_curriculum');
@@ -1140,6 +1147,17 @@ class CollegeController extends Controller
 
         if (
             $section === 'objectives'
+            && $request->query('edit') === 'curriculum'
+            && ! $request->routeIs('admin.colleges.edit-department-curriculum-section')
+        ) {
+            return redirect()->route('admin.colleges.edit-department-curriculum-section', [
+                'college' => $college,
+                'department' => $departmentModel,
+            ]);
+        }
+
+        if (
+            $section === 'objectives'
             && $request->query('edit') === 'add_objective'
             && ! $request->routeIs('admin.colleges.create-department-objective')
         ) {
@@ -1254,10 +1272,42 @@ class CollegeController extends Controller
             && $request->query('program_id')
             && ! $request->routeIs('admin.colleges.edit-department-program')
         ) {
+            $selectedProgram = DepartmentProgram::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('program_id')
+            );
+
+            if (! $selectedProgram) {
+                abort(404, 'Program not found.');
+            }
+
             return redirect()->route('admin.colleges.edit-department-program', [
                 'college' => $college,
                 'department' => $departmentModel,
-                'program' => $request->query('program_id'),
+                'program' => $selectedProgram->getRouteKey(),
+            ]);
+        }
+
+        if (
+            $section === 'extension'
+            && $request->query('edit') === 'extension'
+            && $request->query('action') === 'edit'
+            && $request->query('extension_id')
+            && ! $request->routeIs('admin.colleges.edit-department-extension')
+        ) {
+            $selectedExtension = \App\Models\DepartmentExtension::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('extension_id')
+            );
+
+            if (! $selectedExtension) {
+                abort(404, 'Extension item not found.');
+            }
+
+            return redirect()->route('admin.colleges.edit-department-extension', [
+                'college' => $college,
+                'department' => $departmentModel,
+                'extension' => $selectedExtension->getRouteKey(),
             ]);
         }
 
@@ -1289,10 +1339,19 @@ class CollegeController extends Controller
             && $request->query('alumnus_id')
             && ! $request->routeIs('admin.colleges.edit-department-alumnus')
         ) {
+            $selectedAlumnus = DepartmentAlumnus::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('alumnus_id')
+            );
+
+            if (! $selectedAlumnus) {
+                abort(404, 'Alumnus not found.');
+            }
+
             return redirect()->route('admin.colleges.edit-department-alumnus', [
                 'college' => $college,
                 'department' => $departmentModel,
-                'alumnus' => $request->query('alumnus_id'),
+                'alumnus' => $selectedAlumnus->getRouteKey(),
             ]);
         }
 
@@ -1302,10 +1361,19 @@ class CollegeController extends Controller
             && $request->query('facility_id')
             && ! $request->routeIs('admin.colleges.edit-department-facility')
         ) {
+            $selectedFacility = \App\Models\DepartmentFacility::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('facility_id')
+            );
+
+            if (! $selectedFacility) {
+                abort(404, 'Facility not found.');
+            }
+
             return redirect()->route('admin.colleges.edit-department-facility', [
                 'college' => $college,
                 'department' => $departmentModel,
-                'facility' => $request->query('facility_id'),
+                'facility' => $selectedFacility->getRouteKey(),
             ]);
         }
 
@@ -1364,20 +1432,38 @@ class CollegeController extends Controller
 
         $selectedProgram = null;
         if ($section === 'programs' && $request->query('edit') === 'programs' && $request->query('action') === 'edit' && $request->query('program_id')) {
-            $selectedProgram = DepartmentProgram::where('department_id', $departmentModel->id)
-                ->findOrFail($request->query('program_id'));
+            $selectedProgram = DepartmentProgram::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('program_id')
+            );
+
+            if (! $selectedProgram) {
+                abort(404, 'Program not found.');
+            }
         }
 
         $selectedFacility = null;
         if ($section === 'facilities' && $request->query('edit') === 'edit_facility' && $request->query('facility_id')) {
-            $selectedFacility = \App\Models\DepartmentFacility::where('department_id', $departmentModel->id)
-                ->findOrFail($request->query('facility_id'));
+            $selectedFacility = \App\Models\DepartmentFacility::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('facility_id')
+            );
+
+            if (! $selectedFacility) {
+                abort(404, 'Facility not found.');
+            }
         }
 
         $selectedAlumnus = null;
         if ($section === 'alumni' && $request->query('edit') === 'edit_alumnus' && $request->query('alumnus_id')) {
-            $selectedAlumnus = DepartmentAlumnus::where('department_id', $departmentModel->id)
-                ->findOrFail($request->query('alumnus_id'));
+            $selectedAlumnus = DepartmentAlumnus::findByDepartmentAndRouteKey(
+                $departmentModel->id,
+                $request->query('alumnus_id')
+            );
+
+            if (! $selectedAlumnus) {
+                abort(404, 'Alumnus not found.');
+            }
         }
 
         $selectedCurriculum = null;
@@ -1752,6 +1838,8 @@ class CollegeController extends Controller
                 $data = $request->validate([
                     'title' => ['nullable', 'string', 'max:255'],
                     'courses' => ['nullable', 'string'],
+                    'curriculum_title' => ['nullable', 'string', 'max:255'],
+                    'curriculum_body' => ['nullable', 'string'],
                     'editing_curriculum_id' => ['nullable', 'integer'],
                     'delete_curriculum' => ['nullable', 'integer'],
                     'curriculum' => ['nullable', 'array'],
@@ -1809,6 +1897,11 @@ class CollegeController extends Controller
                 }
 
                 // Handle Curriculum (Save to department_curricula table)
+                $department->update([
+                    'curriculum_title' => $data['curriculum_title'] ?? null,
+                    'curriculum_body' => $data['curriculum_body'] ?? null,
+                ]);
+
                 if ($request->has('curriculum') && is_array($request->input('curriculum'))) {
                     // Delete existing curricula for this department to refresh
                     $department->curricula()->delete();

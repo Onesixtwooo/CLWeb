@@ -24,7 +24,7 @@
             @endif
 
             <form method="POST"
-                  action="{{ route('admin.linkages.update', ['college' => $college, 'department' => $department, 'linkage' => $partner->id]) }}"
+                  action="{{ route('admin.linkages.update', ['college' => $college, 'department' => $department, 'linkage' => $partner->getRouteKey()]) }}"
                   enctype="multipart/form-data">
                 @csrf
                 @method('PUT')

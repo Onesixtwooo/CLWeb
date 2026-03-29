@@ -1108,7 +1108,9 @@
                                 <h3 class="fw-600 mb-2">{{ $videoData->video_title }}</h3>
                             @endif
                             @if ($videoData->video_description)
-                                <p class="text-muted mb-3">{!! nl2br(e($videoData->video_description)) !!}</p>
+                                <div class="ql-editor p-0 text-muted mb-3" style="height: auto;">
+                                    {!! html_entity_decode($videoData->video_description) !!}
+                                </div>
                             @endif
                             
                             @if ($videoData->video_type === 'url' && $videoData->video_url)

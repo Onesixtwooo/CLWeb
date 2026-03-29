@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Faculty extends Model
 {
@@ -26,6 +27,26 @@ class Faculty extends Model
         return [
             'sort_order' => 'integer',
         ];
+    }
+
+    public function getRouteKey(): string
+    {
+        return Str::slug($this->name);
+    }
+
+    public static function findByRouteKey(string|int $value): ?self
+    {
+        if (is_numeric($value)) {
+            return static::find((int) $value);
+        }
+
+        $routeKey = trim((string) $value);
+
+        return static::query()
+            ->get()
+            ->first(function (self $faculty) use ($routeKey) {
+                return $faculty->name === $routeKey || Str::slug($faculty->name) === $routeKey;
+            });
     }
 
     public function user(): BelongsTo

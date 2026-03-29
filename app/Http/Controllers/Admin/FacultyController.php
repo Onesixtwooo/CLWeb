@@ -46,6 +46,19 @@ class FacultyController extends Controller
         return $this->renderCreateView($request, $college, true);
     }
 
+    public function editForDepartment(Request $request, string $college, string $department, Faculty $faculty): View|RedirectResponse
+    {
+        $departmentModel = CollegeDepartment::findByCollegeAndRouteKey($college, $department);
+        if (! $departmentModel) {
+            abort(404, 'Department not found.');
+        }
+
+        $request->query->set('return_college', $college);
+        $request->query->set('return_department', $departmentModel->getRouteKey());
+
+        return $this->edit($request, $faculty);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $data = $request->validate([
@@ -95,6 +108,14 @@ class FacultyController extends Controller
         $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
         $returnCollege = $request->query('return_college', $faculty->college_slug);
         $returnDepartment = $request->query('return_department');
+
+        if ($returnCollege && $returnDepartment && ! $request->routeIs('admin.faculty.edit-department')) {
+            return redirect()->route('admin.faculty.edit-department', [
+                'college' => $returnCollege,
+                'department' => $returnDepartment,
+                'faculty' => $faculty,
+            ]);
+        }
         
         $departments = \App\Models\CollegeDepartment::orderBy('name')->get();
 

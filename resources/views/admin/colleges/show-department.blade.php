@@ -475,7 +475,7 @@
                                                 
                                                 {{-- Action Buttons --}}
                                                 <div class="d-flex gap-2 mt-3">
-                                                    <a href="{{ route('admin.faculty.edit', $member) }}?return_college={{ $collegeSlug }}&return_department={{ $department->getRouteKey() }}" class="btn btn-sm btn-outline-light" style="font-size: 0.75rem;" title="Edit"><i class="bi bi-pencil"></i></a>
+                                                    <a href="{{ route('admin.faculty.edit-department', ['college' => $collegeSlug, 'department' => $department, 'faculty' => $member]) }}" class="btn btn-sm btn-outline-light" style="font-size: 0.75rem;" title="Edit"><i class="bi bi-pencil"></i></a>
                                                     <form action="{{ route('admin.faculty.destroy', $member) }}" method="POST"  class="" onsubmit="return confirm('Remove this faculty member?');">
                                                         @csrf
                                                         @method('DELETE')
@@ -536,10 +536,22 @@
                         {{-- Curriculum Section --}}
                         <div class="border-top pt-4 mt-4">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h4 class="h5 fw-bold mb-0">Curriculum</h4>
+                                <div>
+                                    <h4 class="h5 fw-bold mb-0">Curriculum</h4>
+                                    @if(!empty($sectionContent['curriculum_title']) || !empty($sectionContent['curriculum_body']))
+                                        <div class="mt-2">
+                                            @if(!empty($sectionContent['curriculum_title']))
+                                                <div class="fw-semibold text-dark">{{ $sectionContent['curriculum_title'] }}</div>
+                                            @endif
+                                            @if(!empty($sectionContent['curriculum_body']))
+                                                <div class="ql-editor p-0 text-muted small" style="height: auto;">{!! $sectionContent['curriculum_body'] !!}</div>
+                                            @endif
+                                        </div>
+                                    @endif
+                                </div>
                                 @if(auth()->user() && auth()->user()->canAccessCollege($collegeSlug))
                                     <div class="d-flex align-items-center gap-2">
-                                        <a href="{{ route('admin.colleges.edit-department-section', ['college' => $collegeSlug, 'department' => $department, 'section' => 'objectives']) }}?edit=curriculum" class="btn btn-sm btn-outline-primary">
+                                        <a href="{{ route('admin.colleges.edit-department-curriculum-section', ['college' => $collegeSlug, 'department' => $department]) }}" class="btn btn-sm btn-outline-primary">
                                             <i class="bi bi-pencil-square me-1"></i> <span class="d-none d-md-inline">Edit</span>
                                         </a>
                                         <a href="{{ route('admin.colleges.create-department-curriculum', ['college' => $collegeSlug, 'department' => $department]) }}" class="btn btn-sm btn-outline-primary" title="Add curriculum" aria-label="Add curriculum">
@@ -633,7 +645,7 @@
                                                                 @endif
                                                             </div>
                                                             <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                                                <a href="{{ route('admin.colleges.edit-department-program', ['college' => $collegeSlug, 'department' => $department, 'program' => $program->id]) }}" class="btn btn-sm btn-outline-secondary" title="Edit program">
+                                                                <a href="{{ route('admin.colleges.edit-department-program', ['college' => $collegeSlug, 'department' => $department, 'program' => $program->getRouteKey()]) }}" class="btn btn-sm btn-outline-secondary" title="Edit program">
                                                                     <i class="bi bi-pencil-square me-1"></i><span class="d-none d-md-inline">Edit</span>
                                                                 </a>
                                                                 <form action="{{ route('admin.colleges.update-department', ['college' => $collegeSlug, 'department' => $department]) }}" method="POST" onsubmit="return confirm('Remove this program?');">
@@ -1028,7 +1040,7 @@
                                                 @endif
                                             </div>
                                             <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2">
-                                                <a href="{{ route('admin.colleges.edit-department-extension', ['college' => $collegeSlug, 'department' => $department, 'extension' => $item['id']]) }}" class="btn btn-sm btn-outline-secondary" title="Edit extension">
+                                                <a href="{{ route('admin.colleges.edit-department-extension', ['college' => $collegeSlug, 'department' => $department, 'extension' => \Illuminate\Support\Str::slug($item['title'] ?? '')]) }}" class="btn btn-sm btn-outline-secondary" title="Edit extension">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <form action="{{ route('admin.colleges.update-department', ['college' => $collegeSlug, 'department' => $department]) }}" method="POST" onsubmit="return confirm('Remove this extension activity?')" class="d-inline">
@@ -1100,7 +1112,7 @@
                                                 @endif
                                             </div>
                                             <div class="card-footer bg-white border-0 d-flex justify-content-end gap-2">
-                                                <a href="{{ route('admin.colleges.edit-department-training', ['college' => $collegeSlug, 'department' => $department, 'training' => $item['id']]) }}" class="btn btn-sm btn-outline-secondary" title="Edit training">
+                                                <a href="{{ route('admin.colleges.edit-department-training', ['college' => $collegeSlug, 'department' => $department, 'training' => \Illuminate\Support\Str::slug($item['title'] ?? '')]) }}" class="btn btn-sm btn-outline-secondary" title="Edit training">
                                                     <i class="bi bi-pencil"></i>
                                                 </a>
                                                 <form action="{{ route('admin.colleges.update-department', ['college' => $collegeSlug, 'department' => $department]) }}" method="POST" onsubmit="return confirm('Remove this training item?')" class="d-inline">
@@ -1373,7 +1385,7 @@
                                         data-description="{{ strtolower(trim(strip_tags($item['description'] ?? ''))) }}"
                                     >
                                         <div class="position-absolute top-0 end-0 m-3 d-flex gap-2">
-                                            <a href="{{ route('admin.colleges.edit-department-alumnus', ['college' => $collegeSlug, 'department' => $department, 'alumnus' => $item['id']]) }}" class="btn btn-sm btn-outline-primary bg-white shadow-sm" title="Edit">
+                                            <a href="{{ route('admin.colleges.edit-department-alumnus', ['college' => $collegeSlug, 'department' => $department, 'alumnus' => \Illuminate\Support\Str::slug($item['title'] ?? '')]) }}" class="btn btn-sm btn-outline-primary bg-white shadow-sm" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <form action="{{ route('admin.colleges.destroy-alumnus', ['college' => $collegeSlug, 'department' => $department, 'alumnus' => $item['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this alumni profile?');">
@@ -1517,7 +1529,7 @@
                                                 @endif
                                             </div>
                                             <div class="d-flex gap-1 flex-shrink-0 ms-3">
-                                                <a href="{{ route('admin.linkages.edit', ['college' => $collegeSlug, 'department' => $department, 'linkage' => $linkage['id']]) }}" class="btn btn-sm btn-outline-primary" title="Edit Partner">
+                                                <a href="{{ route('admin.linkages.edit', ['college' => $collegeSlug, 'department' => $department, 'linkage' => \Illuminate\Support\Str::slug($linkage['name'] ?? '')]) }}" class="btn btn-sm btn-outline-primary" title="Edit Partner">
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                                 </a>
                                                 <form action="{{ route('admin.linkages.destroy', ['college' => $collegeSlug, 'department' => $department, 'linkage' => $linkage['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this partner?');">
@@ -1550,11 +1562,20 @@
                     <div class="colleges-detail-body">
                         @php
                             $facilities = $sectionContent['items'] ?? [];
+                            $facilitySlugCounts = collect($facilities)->countBy(function ($item) {
+                                return \Illuminate\Support\Str::slug($item['title'] ?? '');
+                            });
                         @endphp
 
                         @if(!empty($facilities))
                             <ul class="list-unstyled mb-0">
                                 @foreach($facilities as $item)
+                                    @php
+                                        $facilitySlug = \Illuminate\Support\Str::slug($item['title'] ?? '');
+                                        $facilityRouteKey = (($facilitySlugCounts[$facilitySlug] ?? 0) > 1 && !empty($item['id']))
+                                            ? $facilitySlug . '-' . $item['id']
+                                            : ($facilitySlug !== '' ? $facilitySlug : ($item['id'] ?? ''));
+                                    @endphp
                                     <li class="d-flex align-items-center justify-content-between py-2 border-bottom">
                                         <div class="d-flex align-items-center">
                                             <span class="me-2 text-muted">&bull;</span>
@@ -1566,7 +1587,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex gap-1 flex-shrink-0 ms-3">
-                                            <a href="{{ route('admin.colleges.edit-department-facility', ['college' => $collegeSlug, 'department' => $department, 'facility' => $item['id']]) }}" class="btn btn-sm btn-outline-primary" title="Edit Facility">
+                                            <a href="{{ route('admin.colleges.edit-department-facility', ['college' => $collegeSlug, 'department' => $department, 'facility' => $facilityRouteKey]) }}" class="btn btn-sm btn-outline-primary" title="Edit Facility">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                                             </a>
                                             <form action="{{ route('admin.colleges.destroy-facility-item', ['college' => $collegeSlug, 'department' => $department, 'facility' => $item['id']]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this facility?');">

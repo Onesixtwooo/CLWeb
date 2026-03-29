@@ -500,7 +500,13 @@
                         {{-- EXTENSION EDITOR --}}
                         <input type="hidden" name="_extension_edit" value="1">
                         @php
-                            $selectedExtension = collect($content['items'] ?? [])->firstWhere('id', (int) request('extension_id'));
+                            $extensionRouteKey = (string) request('extension_id');
+                            $selectedExtension = collect($content['items'] ?? [])->first(function ($item) use ($extensionRouteKey) {
+                                $itemId = (string) ($item['id'] ?? '');
+                                $itemTitleSlug = \Illuminate\Support\Str::slug($item['title'] ?? '');
+
+                                return $itemId === $extensionRouteKey || $itemTitleSlug === $extensionRouteKey;
+                            });
                         @endphp
 
                         @if(request()->get('action') === 'edit' && $selectedExtension)
@@ -648,7 +654,13 @@
                         {{-- TRAINING EDITOR --}}
                         <input type="hidden" name="_training_edit" value="1">
                         @php
-                            $selectedTraining = collect($content['items'] ?? [])->firstWhere('id', (int) request('training_id'));
+                            $trainingRouteKey = (string) request('training_id');
+                            $selectedTraining = collect($content['items'] ?? [])->first(function ($item) use ($trainingRouteKey) {
+                                $itemId = (string) ($item['id'] ?? '');
+                                $itemTitleSlug = \Illuminate\Support\Str::slug($item['title'] ?? '');
+
+                                return $itemId === $trainingRouteKey || $itemTitleSlug === $trainingRouteKey;
+                            });
                         @endphp
 
                         @if(request()->get('action') === 'edit' && $selectedTraining)
