@@ -17,6 +17,14 @@
                 <div class="col-md-2">
                     <button type="submit" class="btn btn-outline-secondary w-100">Search</button>
                 </div>
+                <div class="col-md-3">
+                    <select name="sort" class="form-select">
+                        <option value="latest" {{ ($sort ?? 'latest') === 'latest' ? 'selected' : '' }}>Sort: Latest first</option>
+                        <option value="oldest" {{ ($sort ?? 'latest') === 'oldest' ? 'selected' : '' }}>Sort: Oldest first</option>
+                        <option value="title_asc" {{ ($sort ?? 'latest') === 'title_asc' ? 'selected' : '' }}>Sort: Title A-Z</option>
+                        <option value="title_desc" {{ ($sort ?? 'latest') === 'title_desc' ? 'selected' : '' }}>Sort: Title Z-A</option>
+                    </select>
+                </div>
             </form>
 
             @if ($announcements->isEmpty())

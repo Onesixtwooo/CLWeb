@@ -232,6 +232,20 @@
                 height: auto;
                 box-shadow: 4px 0 15px rgba(0,0,0,0.3);
             }
+            .admin-main {
+                padding: 1.25rem 1rem;
+            }
+            .admin-navbar {
+                padding: 0.75rem 0.9rem;
+            }
+        }
+        @media (max-width: 575.98px) {
+            .admin-main {
+                padding: 1rem 0.7rem;
+            }
+            .admin-navbar {
+                padding: 0.7rem 0.65rem;
+            }
         }
         .admin-sidebar-toggle {
             border: 0;

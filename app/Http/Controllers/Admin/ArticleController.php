@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Article;
+use App\Models\CollegeDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -49,7 +50,14 @@ class ArticleController extends Controller
     {
         $user = request()->user();
         $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
-        return view('admin.articles.create', compact('colleges'));
+        $departments = $user->isSuperAdmin()
+            ? CollegeDepartment::query()->orderBy('college_slug')->orderBy('name')->get(['college_slug', 'name'])
+            : CollegeDepartment::query()
+                ->where('college_slug', $user->college_slug)
+                ->orderBy('name')
+                ->get(['college_slug', 'name']);
+
+        return view('admin.articles.create', compact('colleges', 'departments'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -65,13 +73,22 @@ class ArticleController extends Controller
             'author' => ['nullable', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],
             'college_slug' => ['nullable', 'string', 'max:80'],
+            'department_name' => ['nullable', 'string', 'max:180'],
         ]);
 
         $user = $request->user();
         if ($user->isBoundedToCollege()) {
             $validated['college_slug'] = $user->college_slug;
+            if ($user->isBoundedToDepartment()) {
+                $validated['department_name'] = $user->department;
+            } elseif (empty($validated['department_name'])) {
+                $validated['department_name'] = null;
+            }
         } elseif (empty($validated['college_slug']) && $user->isSuperAdmin()) {
             $validated['college_slug'] = null;
+            $validated['department_name'] = null;
+        } elseif (empty($validated['department_name'])) {
+            $validated['department_name'] = null;
         }
 
         $validated['slug'] = Str::slug($validated['title']);
@@ -126,7 +143,14 @@ class ArticleController extends Controller
         $this->authorizeManage($article->college_slug);
         $user = request()->user();
         $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
-        return view('admin.articles.edit', compact('article', 'colleges'));
+        $departments = $user->isSuperAdmin()
+            ? CollegeDepartment::query()->orderBy('college_slug')->orderBy('name')->get(['college_slug', 'name'])
+            : CollegeDepartment::query()
+                ->where('college_slug', $user->college_slug)
+                ->orderBy('name')
+                ->get(['college_slug', 'name']);
+
+        return view('admin.articles.edit', compact('article', 'colleges', 'departments'));
     }
 
     public function update(Request $request, Article $article): RedirectResponse
@@ -144,11 +168,22 @@ class ArticleController extends Controller
             'author' => ['nullable', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],
             'college_slug' => ['nullable', 'string', 'max:80'],
+            'department_name' => ['nullable', 'string', 'max:180'],
         ]);
 
         $user = $request->user();
         if ($user->isBoundedToCollege()) {
             $validated['college_slug'] = $user->college_slug;
+            if ($user->isBoundedToDepartment()) {
+                $validated['department_name'] = $user->department;
+            } elseif (empty($validated['department_name'])) {
+                $validated['department_name'] = null;
+            }
+        } elseif (empty($validated['college_slug'])) {
+            $validated['college_slug'] = null;
+            $validated['department_name'] = null;
+        } elseif (empty($validated['department_name'])) {
+            $validated['department_name'] = null;
         }
 
         $currentImages = $article->images ?? [];

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class FacebookConfig extends Model
 {
@@ -51,5 +52,51 @@ class FacebookConfig extends Model
             $q->where('entity_type', 'organization')
               ->where('entity_id', $organizationId);
         });
+    }
+
+    public function getRouteKey(): string
+    {
+        return $this->routeKeyBase();
+    }
+
+    public static function findByRouteKey(string|int $value): ?self
+    {
+        if (is_numeric($value)) {
+            return static::find((int) $value);
+        }
+
+        $routeKey = trim((string) $value);
+
+        return static::query()
+            ->get()
+            ->first(function (self $config) use ($routeKey) {
+                return $config->routeKeyBase() === $routeKey;
+            });
+    }
+
+    protected function routeKeyBase(): string
+    {
+        return match ($this->entity_type) {
+            'college' => (string) $this->entity_id,
+            'department', 'organization' => Str::slug($this->resolveEntityName() ?: $this->page_name ?: $this->entity_id),
+            'global' => 'global',
+            default => Str::slug($this->page_name ?: $this->entity_id ?: 'facebook-config'),
+        };
+    }
+
+    protected function resolveEntityName(): ?string
+    {
+        return match ($this->entity_type) {
+            'college' => \App\Models\College::query()
+                ->where('slug', $this->entity_id)
+                ->value('name'),
+            'department' => \App\Models\CollegeDepartment::query()
+                ->whereKey($this->entity_id)
+                ->value('name'),
+            'organization' => \App\Models\CollegeOrganization::query()
+                ->whereKey($this->entity_id)
+                ->value('name'),
+            default => null,
+        };
     }
 }

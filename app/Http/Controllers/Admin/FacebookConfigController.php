@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\FacebookConfig;
 use App\Models\College;
-use App\Models\CollegeDepartment;
-use App\Models\CollegeOrganization;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -43,20 +41,16 @@ class FacebookConfigController extends Controller implements HasMiddleware
 
         $configs = $query->get();
         $colleges = College::all()->keyBy('slug');
-        $departments = CollegeDepartment::all()->keyBy('id');
-        $organizations = CollegeOrganization::all()->keyBy('id');
 
-        return view('admin.facebook.index', compact('configs', 'colleges', 'departments', 'organizations'));
+        return view('admin.facebook.index', compact('configs', 'colleges'));
     }
 
     public function create(): View
     {
         $colleges = College::orderBy('name')->get();
-        $departments = CollegeDepartment::orderBy('name')->get();
-        $organizations = CollegeOrganization::orderBy('name')->get();
-        $entityTypes = ['global', 'college', 'department', 'organization'];
+        $entityTypes = ['college'];
 
-        return view('admin.facebook.create', compact('colleges', 'departments', 'organizations', 'entityTypes'));
+        return view('admin.facebook.create', compact('colleges', 'entityTypes'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -65,8 +59,8 @@ class FacebookConfigController extends Controller implements HasMiddleware
         $isBounded = $user->isBoundedToCollege();
 
         $validated = $request->validate([
-            'entity_type' => [$isBounded ? 'nullable' : 'required', 'in:global,college,department,organization'],
-            'entity_id' => ['nullable', 'string'],
+            'entity_type' => [$isBounded ? 'nullable' : 'required', 'in:college'],
+            'entity_id' => [$isBounded ? 'nullable' : 'required', 'string'],
             'page_name' => [$isBounded ? 'nullable' : 'required', 'string', 'max:255'],
             'page_id' => ['required', 'string', 'max:255'],
             'access_token' => ['required', 'string'],
@@ -100,11 +94,9 @@ class FacebookConfigController extends Controller implements HasMiddleware
     public function edit(FacebookConfig $facebook): View
     {
         $colleges = College::orderBy('name')->get();
-        $departments = CollegeDepartment::orderBy('name')->get();
-        $organizations = CollegeOrganization::orderBy('name')->get();
-        $entityTypes = ['global', 'college', 'department', 'organization'];
+        $entityTypes = ['college'];
 
-        return view('admin.facebook.edit', ['facebookConfig' => $facebook, 'colleges' => $colleges, 'departments' => $departments, 'organizations' => $organizations, 'entityTypes' => $entityTypes]);
+        return view('admin.facebook.edit', ['facebookConfig' => $facebook, 'colleges' => $colleges, 'entityTypes' => $entityTypes]);
     }
 
     public function update(Request $request, FacebookConfig $facebook): RedirectResponse
@@ -113,8 +105,8 @@ class FacebookConfigController extends Controller implements HasMiddleware
         $isBounded = $user->isBoundedToCollege();
 
         $validated = $request->validate([
-            'entity_type' => [$isBounded ? 'nullable' : 'required', 'in:global,college,department,organization'],
-            'entity_id' => ['nullable', 'string'],
+            'entity_type' => [$isBounded ? 'nullable' : 'required', 'in:college'],
+            'entity_id' => [$isBounded ? 'nullable' : 'required', 'string'],
             'page_name' => [$isBounded ? 'nullable' : 'required', 'string', 'max:255'],
             'page_id' => ['required', 'string', 'max:255'],
             'access_token' => ['required', 'string'],

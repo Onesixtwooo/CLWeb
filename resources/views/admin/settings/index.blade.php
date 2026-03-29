@@ -125,10 +125,10 @@
                             <div class="fw-600 text-dark small">Logo</div>
                             <div class="text-muted" style="font-size:0.8rem;">PNG/JPG/WebP/GIF, max 2MB.</div>
                             <label for="admin_logo" class="btn btn-sm btn-outline-secondary mb-0" style="width:fit-content; cursor:pointer;">
-                                ðŸ“‚ Change image
+                                ?? Change image
                             </label>
                             <button type="button" id="admin-logo-remove-btn" class="btn btn-sm btn-outline-danger {{ empty($adminLogoPath) ? 'd-none' : '' }}" style="width:fit-content;">
-                                ðŸ—‘ Remove logo
+                                ?? Remove logo
                             </button>
                         </div>
                     </div>
@@ -199,12 +199,12 @@
                         </div>
                         <div class="d-flex flex-column gap-2 justify-content-center" style="min-height:135px;">
                             <div class="fw-600 text-dark small">Hero Background</div>
-                            <div class="text-muted" style="font-size:0.8rem;">Preferred: 1920Ã—1080px. PNG/JPG/WebP, max 2MB.</div>
+                            <div class="text-muted" style="font-size:0.8rem;">Preferred: 1920×1080px. PNG/JPG/WebP, max 2MB.</div>
                             <label for="admin_default_hero" class="btn btn-sm btn-outline-secondary mb-0" style="width:fit-content; cursor:pointer;">
-                                ðŸ“‚ Change image
+                                ?? Change image
                             </label>
                             <button type="button" id="admin-hero-remove-btn" class="btn btn-sm btn-outline-danger {{ empty($adminDefaultHeroPath) ? 'd-none' : '' }}" style="width:fit-content;">
-                                ðŸ—‘ Remove hero
+                                ?? Remove hero
                             </button>
                         </div>
                     </div>
@@ -512,7 +512,7 @@
                         <div class="input-group">
                             <input type="password" id="facebook_app_secret" name="facebook_app_secret" class="form-control @error('facebook_app_secret') is-invalid @enderror" 
                                    value="{{ $facebookAppSecret ?? env('FACEBOOK_APP_SECRET') ?? '' }}" 
-                                   placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+                                   placeholder="•••••••••••••">
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('facebook_app_secret', this)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
@@ -528,7 +528,7 @@
                         <div class="input-group">
                             <input type="password" id="facebook_access_token" name="facebook_access_token" class="form-control @error('facebook_access_token') is-invalid @enderror" 
                                    value="{{ $facebookAccessToken ?? env('FACEBOOK_ACCESS_TOKEN') ?? '' }}" 
-                                   placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢">
+                                   placeholder="•••••••••••••">
                             <button class="btn btn-outline-secondary" type="button" onclick="togglePasswordVisibility('facebook_access_token', this)">
                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                             </button>
@@ -584,7 +584,7 @@
                                         <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:20px; height:20px; font-size:10px;">2</span>
                                         Get Credentials
                                     </div>
-                                    <p class="text-muted mb-0" style="font-size: 0.8rem;">In your app settings, go to <strong>Settings</strong> â†’ <strong>Basic</strong> to find your <strong>App ID</strong> and <strong>App Secret</strong>. Copy them to the fields above.</p>
+                                    <p class="text-muted mb-0" style="font-size: 0.8rem;">In your app settings, go to <strong>Settings</strong> ? <strong>Basic</strong> to find your <strong>App ID</strong> and <strong>App Secret</strong>. Copy them to the fields above.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -593,7 +593,7 @@
                                         <span class="badge bg-primary rounded-circle d-flex align-items-center justify-content-center" style="width:20px; height:20px; font-size:10px;">3</span>
                                         Get Page ID
                                     </div>
-                                    <p class="text-muted mb-0" style="font-size: 0.8rem;">Open your Facebook page. Right-click â†’ <strong>View Page Source</strong> and search for <code>page_id</code>. Or use the <a href="https://developers.facebook.com/tools/explorer" target="_blank" class="text-primary fw-500">Graph API Explorer</a>.</p>
+                                    <p class="text-muted mb-0" style="font-size: 0.8rem;">Open your Facebook page. Right-click ? <strong>View Page Source</strong> and search for <code>page_id</code>. Or use the <a href="https://developers.facebook.com/tools/explorer" target="_blank" class="text-primary fw-500">Graph API Explorer</a>.</p>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -647,7 +647,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     syncColor(document.getElementById('admin_header_color'), document.getElementById('admin_header_color_hex'));
 
-    // â”€â”€ Color Palette Interaction â”€â”€
+    // -- Color Palette Interaction --
     document.addEventListener('click', function (e) {
         var swatch = e.target.closest('.color-swatch');
         if (!swatch) return;
@@ -687,7 +687,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // â”€â”€ Logo â”€â”€
+    // -- Logo --
     var logoInput      = document.getElementById('admin_logo');
     var zone           = document.getElementById('admin-logo-zone');
     var img            = document.getElementById('admin-logo-preview');
@@ -778,7 +778,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // â”€â”€ Hero â”€â”€
+    // -- Hero --
     var heroInput = document.getElementById('admin_default_hero');  
     var heroZone       = document.getElementById('admin-hero-zone');
     var heroImg        = document.getElementById('admin-hero-preview');
@@ -896,7 +896,7 @@ if (heroInput) {
         });
     }
 
-    // â”€â”€ Google Drive Helpers â”€â”€
+    // -- Google Drive Helpers --
     window.togglePassword = function (id) {
         var input = document.getElementById(id);
         if (input) {

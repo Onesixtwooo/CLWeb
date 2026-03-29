@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Models\CollegeDepartment;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -13,7 +14,14 @@ class AnnouncementController extends Controller
 {
     public function index(Request $request): View
     {
-        $query = Announcement::query()->latest('published_at');
+        $sort = $request->string('sort')->toString();
+        $allowedSorts = ['latest', 'oldest', 'title_asc', 'title_desc'];
+
+        if (! in_array($sort, $allowedSorts, true)) {
+            $sort = 'latest';
+        }
+
+        $query = Announcement::query();
         $user = $request->user();
         if ($user && $user->isBoundedToDepartment()) {
             $query->where('college_slug', $user->college_slug)
@@ -33,16 +41,31 @@ class AnnouncementController extends Controller
                     ->orWhere('body', 'like', '%'.$request->search.'%');
             });
         }
+
+        match ($sort) {
+            'oldest' => $query->orderByRaw('COALESCE(published_at, created_at) asc'),
+            'title_asc' => $query->orderBy('title'),
+            'title_desc' => $query->orderByDesc('title'),
+            default => $query->orderByRaw('COALESCE(published_at, created_at) desc'),
+        };
+
         $announcements = $query->paginate(15)->withQueryString();
 
-        return view('admin.announcements.index', compact('announcements'));
+        return view('admin.announcements.index', compact('announcements', 'sort'));
     }
 
     public function create(): View
     {
         $user = request()->user();
         $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
-        return view('admin.announcements.create', compact('colleges'));
+        $departments = $user->isSuperAdmin()
+            ? CollegeDepartment::query()->orderBy('college_slug')->orderBy('name')->get(['college_slug', 'name'])
+            : CollegeDepartment::query()
+                ->where('college_slug', $user->college_slug)
+                ->orderBy('name')
+                ->get(['college_slug', 'name']);
+
+        return view('admin.announcements.create', compact('colleges', 'departments'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -53,6 +76,7 @@ class AnnouncementController extends Controller
             'author' => ['nullable', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],
             'college_slug' => ['nullable', 'string', 'max:80'],
+            'department_name' => ['nullable', 'string', 'max:180'],
             'banner' => ['nullable', 'array'],
             'banner.*' => ['nullable', 'image', 'max:5120'],
             'banner_dark' => ['nullable', 'boolean'],
@@ -60,14 +84,19 @@ class AnnouncementController extends Controller
         $user = $request->user();
         if ($user->isBoundedToCollege()) {
             $data['college_slug'] = $user->college_slug;
+            if ($user->isBoundedToDepartment()) {
+                $data['department_name'] = $user->department;
+            } elseif (empty($data['department_name'])) {
+                $data['department_name'] = null;
+            }
         } elseif (empty($data['college_slug']) && $user->isSuperAdmin()) {
             $data['college_slug'] = null;
+            $data['department_name'] = null;
+        } elseif (empty($data['department_name'])) {
+            $data['department_name'] = null;
         }
         $data['author'] = $data['author'] ?: $user->name;
-        $data['slug'] = Str::slug($data['title']);
-        while (Announcement::where('slug', $data['slug'])->exists()) {
-            $data['slug'] = Str::slug($data['title']).'-'.strtolower(Str::random(4));
-        }
+        $data['slug'] = Announcement::generateUniqueSlug($data['title']);
         $data['user_id'] = $user->id;
 
         // Process direct uploads
@@ -98,7 +127,14 @@ class AnnouncementController extends Controller
         $this->authorizeManage($announcement->college_slug);
         $user = request()->user();
         $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
-        return view('admin.announcements.edit', compact('announcement', 'colleges'));
+        $departments = $user->isSuperAdmin()
+            ? CollegeDepartment::query()->orderBy('college_slug')->orderBy('name')->get(['college_slug', 'name'])
+            : CollegeDepartment::query()
+                ->where('college_slug', $user->college_slug)
+                ->orderBy('name')
+                ->get(['college_slug', 'name']);
+
+        return view('admin.announcements.edit', compact('announcement', 'colleges', 'departments'));
     }
 
     public function update(Request $request, Announcement $announcement): RedirectResponse
@@ -110,6 +146,7 @@ class AnnouncementController extends Controller
             'author' => ['nullable', 'string', 'max:255'],
             'published_at' => ['nullable', 'date'],
             'college_slug' => ['nullable', 'string', 'max:80'],
+            'department_name' => ['nullable', 'string', 'max:180'],
             'banner' => ['nullable', 'array'],
             'banner.*' => ['nullable', 'image', 'max:5120'],
             'banner_dark' => ['nullable', 'boolean'],
@@ -118,8 +155,19 @@ class AnnouncementController extends Controller
         $user = $request->user();
         if ($user->isBoundedToCollege()) {
             $data['college_slug'] = $user->college_slug;
+            if ($user->isBoundedToDepartment()) {
+                $data['department_name'] = $user->department;
+            } elseif (empty($data['department_name'])) {
+                $data['department_name'] = null;
+            }
+        } elseif (empty($data['college_slug'])) {
+            $data['college_slug'] = null;
+            $data['department_name'] = null;
+        } elseif (empty($data['department_name'])) {
+            $data['department_name'] = null;
         }
         $data['author'] = $data['author'] ?: $announcement->author ?: $user->name;
+        $data['slug'] = Announcement::generateUniqueSlug($data['title'], $announcement->id);
 
         // Process images
         $allImages = $announcement->images ?? ($announcement->image ? [$announcement->image] : []);

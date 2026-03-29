@@ -366,7 +366,7 @@
                 <div class="live-preview-frame-wrapper" id="livePreviewWrapper" style="height: 700px;">
                     <div class="live-preview-loading" id="livePreviewLoading">
                         <div class="spinner-border text-secondary" role="status"></div>
-                        Loading preview…
+                        Loading previewÃ¢â‚¬Â¦
                     </div>
                     <iframe id="livePreviewFrame"
                             src="{{ route('college.show', ['college' => $collegeSlug]) }}"
@@ -979,7 +979,7 @@
                                                 @foreach($contact->custom_links as $link)
                                                     @if(!empty($link))
                                                         <a href="{{ $link }}" target="_blank" class="text-decoration-none">
-                                                            <span class="badge bg-light text-dark border">🌐 Custom Link</span>
+                                                            <span class="badge bg-light text-dark border">Ã°Å¸Å’Â Custom Link</span>
                                                         </a>
                                                     @endif
                                                 @endforeach
@@ -1858,7 +1858,34 @@
     }
 
 
-    /* ── Responsive Tables to Cards for Mobile ── */
+    @media (max-width: 575.98px) {
+        .colleges-layout {
+            gap: 0 !important;
+        }
+        .colleges-section-list {
+            margin-bottom: 0.65rem !important;
+            border-radius: 1.125rem !important;
+        }
+        .colleges-section-list-header {
+            padding: 0.7rem 1rem !important;
+            font-size: 0.75rem !important;
+        }
+        .colleges-section-item {
+            padding: 0.68rem 1rem !important;
+            font-size: 0.92rem !important;
+            gap: 0.45rem !important;
+        }
+        .colleges-section-item-label {
+            gap: 0.4rem !important;
+            line-height: 1.2 !important;
+        }
+        .colleges-detail {
+            padding: 1.15rem 1rem !important;
+            border-radius: 1.125rem !important;
+        }
+    }
+
+    /* Ã¢â€â‚¬Ã¢â€â‚¬ Responsive Tables to Cards for Mobile Ã¢â€â‚¬Ã¢â€â‚¬ */
     @media (max-width: 991.98px) {
         .colleges-detail {
             padding: 1.25rem !important; /* Slightly reduce padding on mobile detail container */

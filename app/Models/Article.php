@@ -22,6 +22,7 @@ class Article extends Model
         'published_at',
         'user_id',
         'college_slug',
+        'department_name',
         'images',
     ];
 
@@ -32,6 +33,24 @@ class Article extends Model
             'banner_dark' => 'boolean',
             'images' => 'array',
         ];
+    }
+
+    public function getRouteKey(): string
+    {
+        return $this->slug ?: (string) $this->id;
+    }
+
+    public static function findByRouteKey(string|int $value): ?self
+    {
+        if (is_numeric($value)) {
+            return static::find((int) $value);
+        }
+
+        $routeKey = trim((string) $value);
+
+        return static::query()
+            ->where('slug', $routeKey)
+            ->first();
     }
 
     public function user(): BelongsTo

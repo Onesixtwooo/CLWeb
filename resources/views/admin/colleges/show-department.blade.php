@@ -1852,6 +1852,29 @@
     }
 
     @media (max-width: 575.98px) {
+        .colleges-layout {
+            gap: 0 !important;
+        }
+        .colleges-section-list {
+            margin-bottom: 0.65rem !important;
+            border-radius: 1.125rem;
+        }
+        .colleges-section-list-header {
+            padding: 0.7rem 1rem;
+            font-size: 0.75rem;
+        }
+        .colleges-section-item {
+            gap: 0.45rem;
+            padding: 0.68rem 1rem;
+            font-size: 0.92rem;
+        }
+        .colleges-section-label {
+            line-height: 1.2;
+        }
+        .colleges-detail {
+            padding: 1.15rem 1rem;
+            border-radius: 1.125rem;
+        }
         .department-heading {
             align-items: center;
         }

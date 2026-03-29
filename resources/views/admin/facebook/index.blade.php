@@ -3,6 +3,94 @@
 @section('title', 'Facebook Configuration')
 
 @section('content')
+<style>
+    .facebook-config-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+    .facebook-config-card {
+        overflow: hidden;
+    }
+    .facebook-config-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 1.5rem;
+        border-bottom: 1px solid var(--admin-border);
+    }
+    .facebook-config-header h5 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 700;
+    }
+    .facebook-config-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    .facebook-config-table {
+        margin-bottom: 0;
+    }
+    .facebook-config-table thead th {
+        padding: 0.95rem 1.5rem;
+        background: #f8fafc;
+        border-bottom: 1px solid var(--admin-border);
+        font-size: 0.82rem;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+        text-transform: uppercase;
+        color: var(--admin-text-muted);
+        white-space: nowrap;
+    }
+    .facebook-config-table tbody td {
+        padding: 1rem 1.5rem;
+        vertical-align: middle;
+    }
+    .facebook-config-page {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+    }
+    .facebook-config-page strong {
+        font-size: 1rem;
+    }
+    .facebook-config-page small {
+        font-size: 0.82rem;
+    }
+    .facebook-config-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+    .facebook-config-actions form {
+        margin: 0;
+    }
+    @media (max-width: 767.98px) {
+        .facebook-config-header {
+            align-items: flex-start;
+            flex-direction: column;
+        }
+        .facebook-config-toolbar {
+            width: 100%;
+        }
+        .facebook-config-toolbar .btn {
+            width: 100%;
+            justify-content: center;
+        }
+        .facebook-config-table thead th,
+        .facebook-config-table tbody td {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+        .facebook-config-actions {
+            justify-content: flex-start;
+        }
+    }
+</style>
 <div class="admin-page-title">Facebook Settings</div>
 
 @if (session('success'))
@@ -29,13 +117,6 @@
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>
 @endif
-
-<div class="alert alert-info">
-    🔍 **Diagnostic Data:** 
-    Logged-in with College: `{{ auth()->user()->college_slug }}` | 
-    Saved Database Configurations: `{{ \App\Models\FacebookConfig::count() }}` | 
-    Form matches found: `{{ $configs->count() }}`
-</div>
 
 @if (auth()->user()->isBoundedToCollege())
     <div class="admin-card mb-4">
@@ -73,8 +154,6 @@
                 @if ($config)
                     @method('PUT')
                 @endif
-
-
 
                 <div class="col-md-12">
                     <label for="page_id" class="form-label fw-500">Facebook Page ID</label>
@@ -125,7 +204,6 @@
         </div>
     </div>
 
-    <!-- Hidden toggle utility from layout scripts loader -->
     <script>
     function togglePasswordVisibility(id, btn) {
         const input = document.getElementById(id);
@@ -139,47 +217,62 @@
     }
     </script>
 @else
-    <div class="admin-card mb-4">
-        <div class="d-flex justify-content-between align-items-center p-4 border-bottom">
-            <h5 class="mb-0">Facebook Page Configurations</h5>
-            <a href="{{ route('admin.facebook.create') }}" class="btn btn-success">
-                <i class="bi bi-plus-lg"></i> Add Configuration
-            </a>
+    <div class="facebook-config-shell">
+    <div class="admin-card facebook-config-card mb-4">
+        <div class="facebook-config-header">
+            <h5>Facebook Page Configurations</h5>
+            <div class="facebook-config-toolbar">
+                <a href="{{ route('admin.facebook.create') }}" class="btn btn-success">
+                    <i class="bi bi-plus-lg"></i> Add Configuration
+                </a>
+            </div>
         </div>
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover facebook-config-table">
                 <thead>
-                    <tr class="table-light">
+                    <tr>
+                        <th style="width: 28%;">College / Entity</th>
                         <th style="width: 15%;">Entity Type</th>
-                        <th style="width: 25%;">Page Name</th>
-                        <th style="width: 20%;">Entity</th>
-                        <th style="width: 15%;">Status</th>
-                        <th style="width: 25%;">Actions</th>
+                        <th style="width: 22%;">Page Name</th>
+                        <th style="width: 13%;">Status</th>
+                        <th class="text-end" style="width: 22%;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @forelse ($configs as $config)
                         <tr>
                             <td>
+                                <div class="facebook-config-page">
+                                    <strong>
+                                        @if ($config->entity_type === 'global')
+                                            Global
+                                        @elseif ($config->entity_type === 'college')
+                                            {{ $colleges[$config->entity_id]?->name ?? 'Unknown College' }}
+                                        @elseif ($config->entity_type === 'department')
+                                            {{ $departments[$config->entity_id]?->name ?? 'Unknown Department' }}
+                                        @elseif ($config->entity_type === 'organization')
+                                            {{ $organizations[$config->entity_id]?->name ?? 'Unknown Organization' }}
+                                        @endif
+                                    </strong>
+                                    <small class="text-muted">
+                                        @if ($config->entity_type === 'global')
+                                            Global scope
+                                        @else
+                                            {{ ucfirst($config->entity_type) }} configuration
+                                        @endif
+                                    </small>
+                                </div>
+                            </td>
+                            <td>
                                 <span class="badge bg-{{ $config->entity_type === 'global' ? 'primary' : ($config->entity_type === 'college' ? 'success' : ($config->entity_type === 'department' ? 'info' : 'warning')) }}">
                                     {{ ucfirst($config->entity_type) }}
                                 </span>
                             </td>
                             <td>
-                                <strong>{{ $config->page_name }}</strong>
-                                <br>
-                                <small class="text-muted">ID: {{ $config->page_id }}</small>
-                            </td>
-                            <td>
-                                @if ($config->entity_type === 'global')
-                                    <span class="text-muted">—</span>
-                                @elseif ($config->entity_type === 'college')
-                                    <span>{{ $colleges[$config->entity_id]?->name ?? 'Unknown College' }}</span>
-                                @elseif ($config->entity_type === 'department')
-                                    <span>{{ $departments[$config->entity_id]?->name ?? 'Unknown Department' }}</span>
-                                @elseif ($config->entity_type === 'organization')
-                                    <span>{{ $organizations[$config->entity_id]?->name ?? 'Unknown Organization' }}</span>
-                                @endif
+                                <div class="facebook-config-page">
+                                    <strong>{{ $config->page_name }}</strong>
+                                    <small class="text-muted">ID: {{ $config->page_id }}</small>
+                                </div>
                             </td>
                             <td>
                                 @if ($config->is_active)
@@ -188,17 +281,19 @@
                                     <span class="badge bg-secondary">Inactive</span>
                                 @endif
                             </td>
-                            <td>
-                                <a href="{{ route('admin.facebook.edit', $config) }}" class="btn btn-sm btn-outline-primary">
-                                    <i class="bi bi-pencil"></i> Edit
-                                </a>
-                                <form action="{{ route('admin.facebook.destroy', $config) }}" method="POST" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
-                                        <i class="bi bi-trash"></i> Delete
-                                    </button>
-                                </form>
+                            <td class="text-end">
+                                <div class="facebook-config-actions">
+                                    <a href="{{ route('admin.facebook.edit', $config) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-pencil"></i> Edit
+                                    </a>
+                                    <form action="{{ route('admin.facebook.destroy', $config) }}" method="POST">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('Are you sure?')">
+                                            <i class="bi bi-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -212,7 +307,7 @@
             </table>
         </div>
     </div>
+    </div>
 @endif
-
 
 @endsection

@@ -23,13 +23,51 @@
                     </div>
                     @if (auth()->user()?->isSuperAdmin())
                     <div class="col-md-6">
-                        <label for="college_slug" class="form-label">Department</label>
-                        <select name="college_slug" id="college_slug" class="form-select">
-                            <option value="">All departments</option>
+                        <label for="college_slug" class="form-label">College</label>
+                        <select name="college_slug" id="college_slug" class="form-select @error('college_slug') is-invalid @enderror">
+                            <option value="">All colleges</option>
                             @foreach ($colleges as $slug => $name)
                                 <option value="{{ $slug }}" {{ old('college_slug', $announcement->college_slug) === $slug ? 'selected' : '' }}>{{ $name }}</option>
                             @endforeach
                         </select>
+                        @error('college_slug')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    <div class="col-md-6">
+                        <label for="department_name" class="form-label">Department</label>
+                        <select name="department_name" id="department_name" class="form-select @error('department_name') is-invalid @enderror" disabled>
+                            <option value="">-- Select department --</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->name }}" data-college="{{ $department->college_slug }}" {{ old('department_name', $announcement->department_name) === $department->name ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('department_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
+                    </div>
+                    @elseif (auth()->user()?->isBoundedToDepartment())
+                    <input type="hidden" name="department_name" value="{{ auth()->user()->department }}">
+                    <div class="col-md-6">
+                        <label class="form-label">Department</label>
+                        <input type="text" class="form-control" value="{{ auth()->user()->department }}" readonly>
+                    </div>
+                    @elseif (auth()->user()?->isBoundedToCollege())
+                    <div class="col-md-6">
+                        <label for="department_name" class="form-label">Department</label>
+                        <select name="department_name" id="department_name" class="form-select @error('department_name') is-invalid @enderror">
+                            <option value="">-- Select department --</option>
+                            @foreach ($departments as $department)
+                                <option value="{{ $department->name }}" data-college="{{ $department->college_slug }}" {{ old('department_name', $announcement->department_name) === $department->name ? 'selected' : '' }}>
+                                    {{ $department->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('department_name')
+                            <div class="invalid-feedback">{{ $message }}</div>
+                        @enderror
                     </div>
                     @endif
                     <div class="col-md-6">
@@ -57,7 +95,6 @@
                             $currentImages = $announcement->images ?? ($announcement->image ? [$announcement->image] : []);
                         @endphp
 
-                        {{-- Current images from database --}}
                         @if(count($currentImages) > 0)
                             <div class="mb-3">
                                 <label class="form-label small text-muted">Current Image:</label>
@@ -105,6 +142,42 @@
         </div>
     </div>
     <script>
+        function filterAnnouncementDepartments() {
+            const collegeSelect = document.getElementById('college_slug');
+            const departmentSelect = document.getElementById('department_name');
+
+            if (!collegeSelect || !departmentSelect) {
+                return;
+            }
+
+            const selectedCollege = collegeSelect.value;
+            const currentDepartment = departmentSelect.value;
+            let selectedOptionStillVisible = false;
+
+            departmentSelect.disabled = !selectedCollege;
+
+            Array.from(departmentSelect.options).forEach((option, index) => {
+                if (index === 0) {
+                    option.hidden = false;
+                    return;
+                }
+
+                const matchesCollege = !selectedCollege || option.dataset.college === selectedCollege;
+                option.hidden = !matchesCollege;
+
+                if (matchesCollege && option.value === currentDepartment) {
+                    selectedOptionStillVisible = true;
+                }
+            });
+
+            if (!selectedOptionStillVisible) {
+                departmentSelect.value = '';
+            }
+        }
+
+        document.getElementById('college_slug')?.addEventListener('change', filterAnnouncementDepartments);
+        document.addEventListener('DOMContentLoaded', filterAnnouncementDepartments);
+
         document.getElementById('announcementForm').addEventListener('submit', function(e) {
             if (this.checkValidity()) {
                 window.showAdminLoading(

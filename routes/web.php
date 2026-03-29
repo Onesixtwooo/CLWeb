@@ -25,6 +25,18 @@ use App\Http\Controllers\Admin\UserController;
 use App\Models\Faculty;
 use Illuminate\Support\Facades\Route;
 
+Route::bind('article', function ($value) {
+    return \App\Models\Article::findByRouteKey($value) ?? abort(404, 'Article not found.');
+});
+
+Route::bind('announcement', function ($value) {
+    return \App\Models\Announcement::findByRouteKey($value) ?? abort(404, 'Announcement not found.');
+});
+
+Route::bind('facebook', function ($value) {
+    return \App\Models\FacebookConfig::findByRouteKey($value) ?? abort(404, 'Facebook configuration not found.');
+});
+
 Route::bind('faculty', function ($value) {
     return Faculty::findByRouteKey($value) ?? abort(404, 'Faculty member not found.');
 });
