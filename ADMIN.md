@@ -12,12 +12,12 @@ In your `.env` file, set:
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=clsu
+DB_DATABASE=clsu_cis
 DB_USERNAME=root
 DB_PASSWORD=your_password
 ```
 
-Create the database (e.g. `clsu`) in MySQL, then run:
+Create the database (e.g. `clsu_cis`) in MySQL, then run:
 
 ```bash
 php artisan migrate

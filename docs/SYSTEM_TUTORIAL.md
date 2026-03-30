@@ -30,7 +30,7 @@ Important directories:
 - `app/` application logic, controllers, models, services
 - `resources/views/` Blade templates
 - `routes/` web and console routes
-- `database/schema/mysql-schema.sql` baseline schema for fresh installs
+- `database/migrations/` Laravel database migrations
 - `public/` public assets
 - `storage/` logs and framework files
 - `docs/` project documentation
@@ -96,7 +96,7 @@ APP_URL=http://localhost:8001
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=clsu
+DB_DATABASE=clsu_cis
 DB_USERNAME=root
 DB_PASSWORD=
 
@@ -124,27 +124,23 @@ php artisan key:generate
 
 ### 4.6 Create the database
 
-Create an empty database named `clsu` in MySQL.
+Create an empty database named `clsu_cis` in MySQL.
 
 Example SQL:
 
 ```sql
-CREATE DATABASE clsu CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE clsu_cis CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### 4.7 Load the schema
+### 4.7 Run migrations
 
-This project no longer uses the old migration chain for fresh setup. It now uses the baseline schema file:
-
-- `database/schema/mysql-schema.sql`
+This project uses standard Laravel migrations for fresh setup.
 
 Run:
 
 ```bash
 php artisan migrate
 ```
-
-Laravel will load the schema file for a fresh database.
 
 If you want to rebuild everything from scratch:
 
@@ -159,7 +155,7 @@ Important:
 
 ## 5. Default Admin Access
 
-The baseline schema inserts a default superadmin if it does not already exist:
+The initial migration creates a default superadmin if it does not already exist:
 
 - Email: `adminCLSU@clsu.edu`
 
@@ -484,7 +480,7 @@ At minimum, back up:
 
 - MySQL database
 - `.env`
-- `database/schema/mysql-schema.sql`
+- `database/migrations/`
 - any local files not stored in Google Drive
 
 ### 13.2 Database backup
@@ -492,7 +488,7 @@ At minimum, back up:
 Example:
 
 ```bash
-mysqldump -u root -p clsu > clsu-backup.sql
+mysqldump -u root -p clsu_cis > clsu_cis-backup.sql
 ```
 
 ### 13.3 Restore database
@@ -500,7 +496,7 @@ mysqldump -u root -p clsu > clsu-backup.sql
 Example:
 
 ```bash
-mysql -u root -p clsu < clsu-backup.sql
+mysql -u root -p clsu_cis < clsu_cis-backup.sql
 ```
 
 ### 13.4 Recovery strategy
@@ -565,18 +561,13 @@ npm run build
 
 ### 14.5 Schema maintenance
 
-This project now uses a schema baseline file instead of replaying many PHP migrations for fresh installs.
+This project uses Laravel migration files for schema maintenance.
 
-Current baseline:
+When the database structure changes:
 
-- `database/schema/mysql-schema.sql`
-
-If the database structure changes in the future, keep one of these approaches:
-
-- add new normal migrations after the baseline
-- or regenerate the baseline if the team still wants the single-file approach
-
-Do not casually delete or replace the schema file in a live project without verifying the deployment path first.
+- add a new migration
+- keep migrations committed to version control
+- test `php artisan migrate` on a clean database before deployment
 
 ## 15. Troubleshooting
 
@@ -652,7 +643,7 @@ php artisan facebook:fetch-posts --use-db
 - Keep `.env` out of version control.
 - Back up the database before major structural changes.
 - Test Vite, login, uploads, and public pages after deployment.
-- If you use the schema baseline approach, document each structural change carefully.
+- Document each schema change and keep its migration in the repository.
 - Prefer one stable local URL during development to avoid HMR mismatch issues.
 
 ## 17. Recommended Onboarding Flow for New Maintainers

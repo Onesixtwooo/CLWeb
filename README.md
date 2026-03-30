@@ -10,7 +10,7 @@ For the full system manual, read:
 
 It includes:
 - full local setup
-- database setup using the schema baseline
+- database setup using Laravel migrations
 - admin access
 - daily content management workflow
 - Google Drive and Facebook integration
@@ -63,7 +63,7 @@ http://localhost:8001/admin/login
 
 ## Default Superadmin
 
-The baseline schema creates a default superadmin account if it does not already exist:
+The initial migration creates a default superadmin account if it does not already exist:
 
 - Email: `adminCLSU@clsu.edu`
 
