@@ -25,7 +25,9 @@
         }
         .college-page .retro-button:hover,
         .college-page .btn-primary.retro-button:hover {
-            filter: brightness(0.92);
+            background: {{ $headerColor }} !important;
+            border-color: {{ $headerColor }} !important;
+            filter: none !important;
         }
         .college-page .retro-link,
         .college-page .link-button,
@@ -68,6 +70,12 @@
         .college-page .hero-buttons .btn-primary {
             background: {{ $headerColor }} !important;
             border-color: {{ $headerColor }} !important;
+        }
+        .college-page .btn-success.retro-button:hover,
+        .college-page .hero-buttons .btn-primary:hover {
+            background: {{ $headerColor }} !important;
+            border-color: {{ $headerColor }} !important;
+            filter: none !important;
         }
 
         /* Responsive Rich Text (Quill) */

@@ -1126,8 +1126,8 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 }
 
 .college-page .retro-button:hover {
-    background: #6f0708 !important;
-    border-color: #6f0708 !important;
+    background: var(--college-header-color, #86090a) !important;
+    border-color: var(--college-header-color, #86090a) !important;
 }
 
 .college-page .retro-button-outline {
