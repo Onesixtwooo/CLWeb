@@ -18,6 +18,22 @@ class FacilityController extends Controller
 
     public function create(Request $request): View
     {
+        [$colleges, $collegeSlug, $fromCollegeSection, $departments] = $this->resolveCreateContext($request);
+
+        return view('admin.facilities.create', compact('colleges', 'collegeSlug', 'fromCollegeSection', 'departments'));
+    }
+
+    public function createForCollege(Request $request, string $college): View
+    {
+        $request->merge(['college' => $college]);
+
+        [$colleges, $collegeSlug, $fromCollegeSection, $departments] = $this->resolveCreateContext($request);
+
+        return view('admin.facilities.create', compact('colleges', 'collegeSlug', 'fromCollegeSection', 'departments'));
+    }
+
+    private function resolveCreateContext(Request $request): array
+    {
         $user = $request->user();
         $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
         $collegeSlug = $request->query('college');
@@ -35,7 +51,7 @@ class FacilityController extends Controller
                 ->toArray();
         }
 
-        return view('admin.facilities.create', compact('colleges', 'collegeSlug', 'fromCollegeSection', 'departments'));
+        return [$colleges, $collegeSlug, $fromCollegeSection, $departments];
     }
 
     public function store(Request $request): RedirectResponse

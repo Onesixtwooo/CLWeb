@@ -1121,12 +1121,12 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 }
 
 .college-page .retro-button {
-    background: linear-gradient(135deg, #86090a 0%, #b31214 100%) !important;
+    background: #86090a !important;
     border-color: #86090a !important;
 }
 
 .college-page .retro-button:hover {
-    background: linear-gradient(135deg, #6f0708 0%, #9e0f11 100%) !important;
+    background: #6f0708 !important;
     border-color: #6f0708 !important;
 }
 
@@ -1142,7 +1142,7 @@ body.engineering-nav-hidden.college-page .hero-slider-container {
 }
 
 .college-page .hero-overlay {
-    background: rgba(134, 9, 10, 0.55);
+    background: rgba(15, 23, 42, 0.34);
 }
 
 /* Featured Video section */

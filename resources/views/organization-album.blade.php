@@ -25,7 +25,6 @@
             --college-accent-color: {{ $accentColor }};
             --college-header-gradient: {{ $headerColor }};
         }
-        .engineering-top-header, .engineering-header, .engineering-navbar { background: {{ $headerColor }} !important; }
         .it-hero { padding: 8rem 0 4rem 0; color: white; text-align: center; background: var(--college-header-gradient); }
         .back-btn { 
             display: inline-flex; align-items: center; gap: 0.5rem; color: white; 

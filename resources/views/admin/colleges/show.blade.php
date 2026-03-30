@@ -517,6 +517,7 @@
 
                     @if ($currentSection === 'appearance')
                         <form method="POST" action="{{ route('admin.colleges.appearance.update', ['college' => $collegeSlug]) }}" class="row g-3" enctype="multipart/form-data">
+                            <input type="hidden" name="admin_sidebar_color" value="{{ old('admin_sidebar_color', $content['sidebarColor']) }}">
                             @csrf
                             <div class="col-12">
                                 <label class="form-label d-block mb-2">Logo</label>
@@ -839,7 +840,7 @@
                             <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'alumni']) }}" class="btn btn-outline-secondary btn-sm">
                                 <i class="bi bi-pencil-square"></i> <span class="d-none d-md-inline">Edit details</span>
                             </a>
-                            <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'alumni', 'edit' => 'add_alumnus']) }}" class="btn btn-admin-primary btn-sm">
+                            <a href="{{ route('admin.colleges.create-college-alumnus', ['college' => $collegeSlug]) }}" class="btn btn-admin-primary btn-sm">
                                 <i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Add alumni</span>
                             </a>
                         </div>
@@ -893,7 +894,7 @@
                                                 </button>
                                             </form>
                                         @else
-                                            <a href="{{ route('admin.colleges.edit-section', ['college' => $collegeSlug, 'section' => 'alumni', 'edit' => 'edit_alumnus', 'alumnus_id' => $item->getRouteKey()]) }}" class="btn btn-sm btn-outline-primary bg-white shadow-sm" title="Edit">
+                                            <a href="{{ route('admin.colleges.edit-college-alumnus', ['college' => $collegeSlug, 'alumnus' => $item->getRouteKey()]) }}" class="btn btn-sm btn-outline-primary bg-white shadow-sm" title="Edit">
                                                 <i class="bi bi-pencil-square"></i>
                                             </a>
                                             <form action="{{ route('admin.colleges.destroy-college-alumnus', ['college' => $collegeSlug, 'alumnus' => $item->id]) }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this alumni profile?');">
@@ -1495,7 +1496,7 @@
                 <div class="colleges-detail mt-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h3 class="h5 mb-0 fw-600">Facility roster</h3>
-                        <a href="{{ route('admin.facilities.create', ['college' => $collegeSlug]) }}" class="btn btn-admin-primary btn-sm"><i class="bi bi-building-plus"></i> <span class="d-none d-md-inline">Add facility</span></a>
+                        <a href="{{ route('admin.colleges.facilities.create', ['college' => $collegeSlug]) }}" class="btn btn-admin-primary btn-sm"><i class="bi bi-building-plus"></i> <span class="d-none d-md-inline">Add facility</span></a>
                     </div>
 
                 @if ($facilityList->isEmpty())
@@ -1763,7 +1764,7 @@
                 <div class="colleges-detail mt-4">
                     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
                         <h2 class="colleges-detail-title mb-0">Accreditation Status</h2>
-                        <a href="{{ route('admin.accreditations.create', ['college' => $collegeSlug]) }}" class="btn btn-admin-primary btn-sm"><i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Add Accreditation Record</span></a>
+                        <a href="{{ route('admin.colleges.accreditations.create', ['college' => $collegeSlug]) }}" class="btn btn-admin-primary btn-sm"><i class="bi bi-plus-circle"></i> <span class="d-none d-md-inline">Add Accreditation Record</span></a>
                     </div>
 
                     @if ($accreditationList->isEmpty())

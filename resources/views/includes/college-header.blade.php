@@ -28,10 +28,10 @@
 
 <!-- Loader screen -->
     <div id="engineering-loader" class="engineering-loader" aria-hidden="false" aria-label="Loading {{ $collegeName }}">
-        <div class="engineering-loader-inner">
+        <div class="engineering-loader-inner d-flex flex-column align-items-center text-center p-4 gap-3">
             <img src="{{ $collegeLogoUrl }}" alt="{{ $collegeName }}" class="engineering-loader-logo">
-            <p class="engineering-loader-title">{{ $collegeName }}</p>
-            <p class="engineering-loader-subtitle">Central Luzon State University</p>
+            <p class="engineering-loader-title mb-0">{{ $collegeName }}</p>
+            <p class="engineering-loader-subtitle mb-0">Central Luzon State University</p>
             <div class="engineering-loader-spinner"></div>
         </div>
     </div>

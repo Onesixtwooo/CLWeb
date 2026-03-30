@@ -28,14 +28,6 @@
             --college-accent-color: {{ $accentColor }};
             --college-header-gradient: {{ $headerColor }};
         }
-
-        /* Reuse header styles from department page */
-        .engineering-top-header,
-        .engineering-header,
-        .engineering-navbar {
-            background: {{ $headerColor }} !important;
-        }
-
         .engineering-navbar .nav-link { color: rgba(255, 255, 255, 0.85); }
         .engineering-navbar .nav-link:hover,
         .engineering-navbar .nav-link:focus,

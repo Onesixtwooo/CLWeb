@@ -21,15 +21,19 @@
     <style>
         .explore-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 360px));
             gap: 1.5rem;
             align-items: stretch;
+            justify-content: center;
         }
         .facility-card {
             display: flex;
             flex-direction: column;
             height: 100%;
             min-height: 100%;
+            width: 100%;
+            max-width: 360px;
+            margin-inline: auto;
             background: #ffffff;
             border: 1px solid color-mix(in srgb, {{ $headerColor }} 10%, #e2e8f0 90%);
             border-radius: 18px;
@@ -105,14 +109,7 @@
             border-radius: 24px;
             overflow: hidden;
             color: #ffffff;
-            background:
-                radial-gradient(circle at top left, rgba(255, 255, 255, 0.24), transparent 30%),
-                linear-gradient(
-                    160deg,
-                    color-mix(in srgb, {{ $headerColor }} 82%, #ffffff 18%) 0%,
-                    {{ $headerColor }} 56%,
-                    color-mix(in srgb, {{ $accentColor }} 84%, #0f172a 16%) 100%
-                );
+            background: {{ $headerColor }};
             box-shadow: 0 20px 42px rgba(15, 23, 42, 0.16);
             transition: transform 0.25s ease, box-shadow 0.25s ease;
         }
@@ -813,7 +810,7 @@
                 </div>
             @else
                 {{-- Grid layout for 4 or fewer departments --}}
-                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4 justify-content-center">
                     @foreach ($departments as $department)
                         @php
                             $deptOverview = $department->getSection('overview');
@@ -1245,8 +1242,9 @@
                 <p class="retro-section-text mx-auto mt-2">Latest news and announcements from {{ $collegeName }}.</p>
             </div>
 
+            @if($articles->isNotEmpty())
             <div class="row row-cols-1 row-cols-md-3 row-cols-lg-4 g-3 mt-4">
-                @forelse ($articles as $article)
+                @foreach ($articles as $article)
                     <div class="col">
                     <a class="event-card rounded-3" href="{{ route($article->route_name, ['college' => $collegeSlug, 'slug' => $article->slug]) }}">
                         <div class="event-card-meta">
@@ -1260,12 +1258,13 @@
                         </div>
                     </a>
                     </div>
-                @empty
-                    <div class="col-12 text-center py-5">
-                        <p class="text-muted">No news or announcements available at this time.</p>
-                    </div>
-                @endforelse
+                @endforeach
             </div>
+            @else
+            <div class="d-flex justify-content-center align-items-center text-center py-5 mt-4">
+                <p class="text-muted mb-0">No news or announcements available at this time.</p>
+            </div>
+            @endif
 
             <div class="events-link text-center mt-4">
                 @if($collegeSlug === 'engineering')

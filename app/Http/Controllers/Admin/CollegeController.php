@@ -570,6 +570,21 @@ class CollegeController extends Controller
         return $this->renderCollegeSectionEditor($request, $college, 'overview', 'retro', $retro);
     }
 
+    public function createCollegeAlumnus(Request $request, string $college): View|RedirectResponse
+    {
+        $request->query->set('edit', 'add_alumnus');
+
+        return $this->renderCollegeSectionEditor($request, $college, 'alumni', 'add_alumnus');
+    }
+
+    public function editCollegeAlumnus(Request $request, string $college, string $alumnus): View|RedirectResponse
+    {
+        $request->query->set('edit', 'edit_alumnus');
+        $request->query->set('alumnus_id', $alumnus);
+
+        return $this->renderCollegeSectionEditor($request, $college, 'alumni', 'edit_alumnus');
+    }
+
     private function renderCollegeSectionEditor(
         Request $request,
         string $college,
@@ -620,6 +635,37 @@ class CollegeController extends Controller
         
         // For featured_video edit mode, load from CollegeVideo table
         $editMode = $forcedEditMode ?? $request->query('edit');
+        if (
+            $section === 'alumni'
+            && $editMode === 'add_alumnus'
+            && ! $request->routeIs('admin.colleges.create-college-alumnus')
+        ) {
+            return redirect()->route('admin.colleges.create-college-alumnus', [
+                'college' => $college,
+            ]);
+        }
+
+        if (
+            $section === 'alumni'
+            && $editMode === 'edit_alumnus'
+            && $request->query('alumnus_id')
+            && ! $request->routeIs('admin.colleges.edit-college-alumnus')
+        ) {
+            $selectedAlumnus = DepartmentAlumnus::findByCollegeAndRouteKey(
+                $college,
+                $request->query('alumnus_id')
+            );
+
+            if (! $selectedAlumnus) {
+                abort(404, 'Alumnus not found.');
+            }
+
+            return redirect()->route('admin.colleges.edit-college-alumnus', [
+                'college' => $college,
+                'alumnus' => $selectedAlumnus->getRouteKey(),
+            ]);
+        }
+
         if ($section === 'overview' && $editMode === 'featured_video') {
             $videoRecord = CollegeVideo::where('college_slug', $college)->first();
             $content = $videoRecord; // Use video record directly

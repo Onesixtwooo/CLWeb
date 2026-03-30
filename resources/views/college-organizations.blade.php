@@ -169,12 +169,10 @@
                                             <img src="{{ str_starts_with($org->logo, 'http') ? $org->logo : asset($org->logo) }}"
                                                  alt="{{ $org->name }}" class="org-card-logo">
                                         @else
-                                            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="{{ $headerColor }}" stroke-width="1" opacity="0.3">
-                                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                                <circle cx="9" cy="7" r="4"></circle>
-                                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                            </svg>
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}"
+                                                 alt="{{ $collegeName }} Logo"
+                                                 class="org-card-logo opacity-50"
+                                                 style="filter: grayscale(100%);">
                                         @endif
                                     </div>
                                     <div class="org-card-body">

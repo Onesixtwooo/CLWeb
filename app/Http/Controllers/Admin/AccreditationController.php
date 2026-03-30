@@ -14,6 +14,30 @@ use Illuminate\Support\Str;
 
 class AccreditationController extends Controller
 {
+    private function accreditationCreateContext(Request $request, ?string $collegeSlug = null, bool $fromCollegeSection = false): array
+    {
+        $user = $request->user();
+        $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
+
+        if ($fromCollegeSection && $user->isBoundedToCollege()) {
+            $collegeSlug = $user->college_slug;
+        }
+
+        $programs = [];
+        if ($collegeSlug) {
+            $programs = DepartmentProgram::whereHas('department', function ($q) use ($collegeSlug) {
+                $q->where('college_slug', $collegeSlug);
+            })->orderBy('title')->get();
+        }
+
+        return [
+            'colleges' => $colleges,
+            'collegeSlug' => $collegeSlug,
+            'fromCollegeSection' => $fromCollegeSection,
+            'programs' => $programs,
+        ];
+    }
+
     private function resolveDepartmentSlug(?int $programId): ?string
     {
         if (! $programId) {
@@ -97,25 +121,20 @@ class AccreditationController extends Controller
         return redirect()->route('admin.colleges.index');
     }
 
+    public function createForCollege(Request $request, string $college): View
+    {
+        return view('admin.accreditation.create', $this->accreditationCreateContext($request, $college, true));
+    }
+
     public function create(Request $request): View
     {
-        $user = $request->user();
-        $colleges = $user->isSuperAdmin() ? CollegeController::getColleges() : [];
         $collegeSlug = $request->query('college');
-        $fromCollegeSection = (string) $collegeSlug !== '';
-        
-        if ($fromCollegeSection && $user->isBoundedToCollege()) {
-            $collegeSlug = $user->college_slug;
+
+        if ((string) $collegeSlug !== '') {
+            return redirect()->route('admin.colleges.accreditations.create', ['college' => $collegeSlug]);
         }
 
-        $programs = [];
-        if ($collegeSlug) {
-            $programs = DepartmentProgram::whereHas('department', function($q) use ($collegeSlug) {
-                $q->where('college_slug', $collegeSlug);
-            })->orderBy('title')->get();
-        }
-
-        return view('admin.accreditation.create', compact('colleges', 'collegeSlug', 'fromCollegeSection', 'programs'));
+        return view('admin.accreditation.create', $this->accreditationCreateContext($request));
     }
 
     public function store(Request $request): RedirectResponse

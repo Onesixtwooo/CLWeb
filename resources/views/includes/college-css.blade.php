@@ -66,7 +66,7 @@
         }
         .college-page .btn-success.retro-button,
         .college-page .hero-buttons .btn-primary {
-            background: linear-gradient(135deg, {{ $headerColor }} 0%, {{ $accentColor }} 100%) !important;
+            background: {{ $headerColor }} !important;
             border-color: {{ $headerColor }} !important;
         }
 

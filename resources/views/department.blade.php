@@ -48,6 +48,12 @@
             color: #ffffff;
         }
 
+        .engineering-navbar .logo-full-text,
+        .engineering-navbar .logo-short-text {
+            font-family: "Libre Franklin", sans-serif !important;
+            font-style: normal;
+        }
+
         /* Keep navbar links white and background transparent on hover/click */
         .engineering-navbar .nav-link:hover,
         .engineering-navbar .nav-link:focus,
@@ -528,7 +534,7 @@
                     <div class="logo-text d-flex flex-column">
                         <h2 class="retro-heading mb-0">
                             <span class="logo-full-text d-none d-md-inline">{{ strtoupper($collegeName) }}</span>
-                            <span class="logo-short-text d-inline d-md-none">{{ $collegeShortName }}</span>
+                            <span class="logo-short-text d-inline d-md-none">{{ strtoupper($collegeName) }}</span>
                         </h2>
                         <p class="retro-subtitle">
                             <span class="d-inline d-md-none">CLSU</span>
@@ -642,7 +648,8 @@
             $hasTraining = $department->training_is_visible && $training->total() > 0;
             
             // Linkages
-            $hasLinkages = ($department->linkages_is_visible ?? true) && !empty($department->linkages_body); 
+            $hasLinkages = ($department->linkages_is_visible ?? true)
+                && (!empty($department->linkages_body) || $department->linkages->count() > 0);
             $hasFacilities = $department->facilities_is_visible && $facilities->total() > 0;
             $hasAlumni = $department->alumni_is_visible && $alumni->total() > 0;
             $hasMemberships = ($membershipSectionVisible ?? true) && isset($memberships) && $memberships->count() > 0;
@@ -878,6 +885,8 @@
                                 <div class="faculty-card-photo-wrap">
                                     @if($member->photo)
                                         <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($member->photo, 'images') }}" alt="{{ $member->name }}" class="faculty-card-photo">
+                                    @elseif(!empty($collegeLogoUrl))
+                                        <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" alt="{{ $collegeName }} Logo" class="faculty-card-photo" style="object-fit: contain; padding: 1rem; background: #ffffff; opacity: 0.5; filter: grayscale(100%);">
                                     @else
                                         <div class="faculty-card-photo d-flex align-items-center justify-content-center text-muted small">No photo</div>
                                     @endif
@@ -1034,9 +1043,13 @@
                                 <div class="ratio ratio-16x9 bg-secondary bg-opacity-10">
                                     @if(!empty($award['image']))
                                         <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($award['image']) }}" class="object-fit-cover" alt="{{ $award['title'] }}">
+                                    @elseif(!empty($collegeLogoUrl))
+                                        <div class="d-flex align-items-center justify-content-center h-100 bg-white">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" class="img-fluid p-4 opacity-50" alt="{{ $collegeName }} Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                                        </div>
                                     @elseif(!empty($department->logo))
                                         <div class="d-flex align-items-center justify-content-center h-100 bg-white">
-                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4" alt="Department Logo" style="max-height: 100%; object-fit: contain;">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4 opacity-50" alt="Department Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                         </div>
                                     @else
                                         <div class="d-flex align-items-center justify-content-center h-100 text-muted">
@@ -1090,9 +1103,13 @@
                                 <div class="ratio ratio-16x9 bg-secondary bg-opacity-10">
                                     @if(!empty($item['image']))
                                         <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item['image']) }}" class="object-fit-cover" alt="{{ $item['title'] }}">
+                                    @elseif(!empty($collegeLogoUrl))
+                                        <div class="d-flex align-items-center justify-content-center h-100 bg-white">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" class="img-fluid p-4 opacity-50" alt="{{ $collegeName }} Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                                        </div>
                                     @elseif(!empty($department->logo))
                                         <div class="d-flex align-items-center justify-content-center h-100 bg-white">
-                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4" alt="Department Logo" style="max-height: 100%; object-fit: contain;">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4 opacity-50" alt="Department Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                         </div>
                                     @else
                                         <div class="d-flex align-items-center justify-content-center h-100 text-muted">
@@ -1145,10 +1162,14 @@
                                 <div class="card h-100 shadow-sm border-0 transition-hover">
                                     <div class="position-relative overflow-hidden" style="height: 200px;">
                                         @if(!empty($item['image']))
-                                            <img src="{{ asset($item['image']) }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item['title'] }}">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item['image']) }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item['title'] }}">
+                                        @elseif(!empty($collegeLogoUrl))
+                                            <div class="d-flex align-items-center justify-content-center h-100 bg-white">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" class="img-fluid p-4 opacity-50" alt="{{ $collegeName }} Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                                            </div>
                                         @elseif(!empty($department->logo))
                                             <div class="d-flex align-items-center justify-content-center h-100 bg-white">
-                                                <img src="{{ asset($department->logo) }}" class="img-fluid p-4" alt="Department Logo" style="max-height: 100%; object-fit: contain;">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4 opacity-50" alt="Department Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                             </div>
                                         @else
                                             <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
@@ -1188,7 +1209,7 @@
             <section id="training" class="py-5 it-tab-section">
                 <div class="container">
                     <div class="section-header mb-5 d-flex flex-column align-items-center text-center">
-                        <span class="section-badge retro-label" style="background: #f59e0b; color: #ffffff; padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; width: fit-content;">{{ $department->training_title ?: 'Training & Workshops' }}</span>
+                        <span class="section-badge retro-label" style="background: {{ $headerColor }}; color: #ffffff; padding: 0.5rem 1.25rem; display: inline-block; letter-spacing: 2px; width: fit-content;">{{ $department->training_title ?: 'Training & Workshops' }}</span>
                         @if(!empty($department->training_body))
                             <div class="retro-section-text mt-4">{!! $department->training_body !!}</div>
                         @endif
@@ -1200,10 +1221,14 @@
                                 <div class="card h-100 shadow-sm border-0 transition-hover">
                                     <div class="position-relative overflow-hidden" style="height: 200px;">
                                         @if(!empty($item['image']))
-                                            <img src="{{ asset($item['image']) }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item['title'] }}">
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item['image']) }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item['title'] }}">
+                                        @elseif(!empty($collegeLogoUrl))
+                                            <div class="d-flex align-items-center justify-content-center h-100 bg-white">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" class="img-fluid p-4 opacity-50" alt="{{ $collegeName }} Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                                            </div>
                                         @elseif(!empty($department->logo))
                                             <div class="d-flex align-items-center justify-content-center h-100 bg-white">
-                                                <img src="{{ asset($department->logo) }}" class="img-fluid p-4" alt="Department Logo" style="max-height: 100%; object-fit: contain;">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4 opacity-50" alt="Department Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                             </div>
                                         @else
                                             <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
@@ -1320,9 +1345,13 @@
                                     <div class="position-relative overflow-hidden" style="height: 200px;">
                                         @if(!empty($item['image']))
                                             <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item['image']) }}" class="card-img-top w-100 h-100 object-fit-cover" alt="{{ $item['title'] }}">
+                                        @elseif(!empty($collegeLogoUrl))
+                                            <div class="d-flex align-items-center justify-content-center h-100 bg-white">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" class="img-fluid p-4 opacity-50" alt="{{ $collegeName }} Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                                            </div>
                                         @elseif(!empty($department->logo))
                                             <div class="d-flex align-items-center justify-content-center h-100 bg-white">
-                                                <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($department->logo) }}" class="img-fluid p-4" alt="Department Logo" style="max-height: 100%; object-fit: contain;">
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" class="img-fluid p-4 opacity-50" alt="Department Logo" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                             </div>
                                         @else
                                             <div class="d-flex align-items-center justify-content-center h-100 bg-light text-muted">
@@ -1366,6 +1395,10 @@
                                         <div class="position-relative d-inline-block">
                                             @if(!empty($item['image']))
                                                 <img src="{{ \App\Providers\AppServiceProvider::resolveImageUrl($item['image']) }}" class="rounded-circle object-fit-cover shadow-sm" alt="{{ $item['title'] }}" style="width: 150px; height: 150px; border: 4px solid #fff;">
+                                            @elseif(!empty($collegeLogoUrl))
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" alt="{{ $collegeName }} Logo" class="rounded-circle shadow-sm" style="width: 150px; height: 150px; border: 4px solid #fff; object-fit: contain; padding: 1.25rem; background: #ffffff; opacity: 0.5; filter: grayscale(100%);">
+                                            @elseif(!empty($department->logo))
+                                                <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" alt="{{ $department->name }} Logo" class="rounded-circle shadow-sm" style="width: 150px; height: 150px; border: 4px solid #fff; object-fit: contain; padding: 1.25rem; background: #ffffff; opacity: 0.5; filter: grayscale(100%);">
                                             @else
                                                 <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto shadow-sm" style="width: 150px; height: 150px; border: 4px solid #fff;">
                                                     <i class="bi bi-person-badge fs-1 text-muted"></i>
@@ -1415,6 +1448,10 @@
                                     <div class="accreditation-logo-wrap text-center p-4 mt-3" style="height: 160px; display: flex; align-items: center; justify-content: center;">
                                         @if($membership->logo)
                                             <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($membership->logo) }}" alt="{{ $membership->organization }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
+                                        @elseif(!empty($collegeLogoUrl))
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" alt="{{ $collegeName }} Logo" class="img-fluid opacity-50" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
+                                        @elseif(!empty($department->logo))
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" alt="{{ $department->name }} Logo" class="img-fluid opacity-50" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                         @else
                                             <div class="w-100 h-100 bg-light rounded d-flex align-items-center justify-content-center">
                                                 <i class="bi bi-award fs-1 text-muted opacity-50"></i>
@@ -1467,6 +1504,8 @@
                                     <div class="accreditation-logo-wrap text-center p-4 mt-3" style="height: 160px; display: flex; align-items: center; justify-content: center;">
                                         @if($org->logo)
                                             <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($org->logo) }}" alt="{{ $org->acronym ?? $org->name }}" class="img-fluid" style="max-height: 100%; object-fit: contain;">
+                                        @elseif(!empty($collegeLogoUrl))
+                                            <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($collegeLogoUrl) }}" alt="{{ $collegeName }} Logo" class="img-fluid opacity-50" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                         @elseif(!empty($department->logo))
                                             <img src="{{ \App\Providers\AppServiceProvider::resolveLogoUrl($department->logo) }}" alt="{{ $department->name }} Logo" class="img-fluid opacity-50" style="max-height: 100%; object-fit: contain; filter: grayscale(100%);">
                                         @else

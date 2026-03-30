@@ -150,6 +150,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('{college}/faculty/create', [FacultyController::class, 'createForCollege'])->name('faculty.create-college');
         Route::resource('faculty', FacultyController::class)->except(['show', 'create']);
         Route::get('faculty/create', [FacultyController::class, 'create'])->name('faculty.create');
+        Route::get('colleges/{college}/facilities/create', [FacilityController::class, 'createForCollege'])->name('colleges.facilities.create');
         Route::resource('facilities', FacilityController::class)->except(['show']);
         Route::delete('facilities/images/{facilityImage}', [FacilityController::class, 'destroyImage'])->name('facilities.images.destroy');
         Route::resource('institutes', InstituteController::class)->except(['show']);
@@ -157,6 +158,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('faqs/{college}/create', [FaqController::class, 'create'])->name('faqs.create-college');
         Route::resource('faqs', FaqController::class)->except(['show']);
         Route::resource('testimonials', TestimonialController::class)->except(['show']);
+        Route::get('colleges/{college}/accreditations/create', [AccreditationController::class, 'createForCollege'])->name('colleges.accreditations.create');
         Route::resource('accreditations', AccreditationController::class)->except(['show']);
         Route::get('{college}/{department}/memberships/create', [MembershipController::class, 'createDepartment'])->name('colleges.create-department-membership');
         Route::get('{college}/{department}/memberships/{membership}/edit', [MembershipController::class, 'editDepartment'])->name('colleges.edit-department-membership');
@@ -203,6 +205,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('colleges/{college}/overview/featured-video/edit', [CollegeController::class, 'editCollegeFeaturedVideo'])->name('colleges.edit-featured-video');
         Route::get('colleges/{college}/overview/retro/create', [CollegeController::class, 'createCollegeRetro'])->name('colleges.create-retro');
         Route::get('colleges/{college}/overview/retro/{retro}/edit', [CollegeController::class, 'editCollegeRetro'])->name('colleges.edit-retro');
+        Route::get('colleges/{college}/alumni/create', [CollegeController::class, 'createCollegeAlumnus'])->name('colleges.create-college-alumnus');
+        Route::get('colleges/{college}/alumni/{alumnus}/edit', [CollegeController::class, 'editCollegeAlumnus'])->name('colleges.edit-college-alumnus');
         Route::get('colleges/{college}/{section}/edit', [CollegeController::class, 'edit'])->name('colleges.edit-section');
         Route::post('colleges/{college}/{section}/toggle-visibility', [CollegeController::class, 'toggleVisibility'])->name('colleges.toggle-visibility');
         Route::put('colleges/{college}/{section}', [CollegeController::class, 'update'])->name('colleges.update-section');

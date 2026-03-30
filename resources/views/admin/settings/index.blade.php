@@ -91,6 +91,7 @@
                 <p class="text-muted small mb-2">You are editing the <strong>global</strong> admin theme (superadmin).</p>
             @endif
             <form method="POST" action="{{ route('admin.settings.appearance.update') }}" class="row g-3" enctype="multipart/form-data">
+                <input type="hidden" name="admin_sidebar_color" value="{{ old('admin_sidebar_color', $sidebarColor) }}">
                 @csrf
                 <div class="col-12">
                     <label class="form-label d-block mb-2">Logo</label>

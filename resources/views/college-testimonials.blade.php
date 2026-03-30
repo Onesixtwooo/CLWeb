@@ -34,8 +34,7 @@
         .testimonial-card {
             --testimonial-primary: {{ $headerColor }};
             --testimonial-accent: {{ $accentColor }};
-            background:
-                linear-gradient(160deg, color-mix(in srgb, var(--testimonial-primary) 78%, white 22%) 0%, var(--testimonial-primary) 52%, color-mix(in srgb, var(--testimonial-accent) 82%, black 18%) 100%);
+            background: var(--testimonial-primary);
             border-radius: 28px;
             overflow: hidden;
             border: 0;
@@ -50,14 +49,7 @@
             box-shadow: 0 28px 56px rgba(15, 23, 42, 0.24);
         }
         .testimonial-card::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at top left, rgba(255, 255, 255, 0.28), transparent 34%),
-                linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 46%);
-            pointer-events: none;
-            z-index: -1;
+            content: none;
         }
         .testimonial-body {
             padding: 2rem;
@@ -100,6 +92,15 @@
             color: #ffffff;
             font-weight: 800;
             font-size: 1.5rem;
+        }
+        .testimonial-story {
+            margin-top: 1.5rem;
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 0.98rem;
+            line-height: 1.75;
+        }
+        .testimonial-story p:last-child {
+            margin-bottom: 0;
         }
         @media (max-width: 767.98px) {
             .testimonial-body {
@@ -162,6 +163,11 @@
                                                 @endif
                                             </div>
                                         </div>
+                                        @if(!empty($testimonial->description))
+                                            <div class="testimonial-story">
+                                                {!! $testimonial->description !!}
+                                            </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>
