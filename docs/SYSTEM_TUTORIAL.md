@@ -312,15 +312,25 @@ Media examples:
 
 ## 8. Google Drive Setup
 
-If the system should upload files to Google Drive, configure these in `.env`:
+If the system should upload files to Google Drive, set the filesystem disk in `.env`:
 
 ```env
 FILESYSTEM_DISK=google
-GOOGLE_DRIVE_CLIENT_ID=
-GOOGLE_DRIVE_CLIENT_SECRET=
-GOOGLE_DRIVE_REFRESH_TOKEN=
-GOOGLE_DRIVE_FOLDER_ID=
 ```
+
+Then configure the Google Drive credentials in the admin settings page:
+
+- Admin > Settings > Google Drive API Configuration
+- Folder ID
+- Client ID
+- Client Secret
+- Refresh Token
+
+Notes:
+
+- This project reads Google Drive credentials from the `settings` table first.
+- The `GOOGLE_DRIVE_CLIENT_ID`, `GOOGLE_DRIVE_CLIENT_SECRET`, `GOOGLE_DRIVE_REFRESH_TOKEN`, and `GOOGLE_DRIVE_FOLDER_ID` values in `.env` are fallback values only.
+- In normal use, update Google Drive credentials from the admin settings UI instead of editing `.env`.
 
 Then follow the full guide in:
 
