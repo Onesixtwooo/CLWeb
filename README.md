@@ -1,45 +1,64 @@
 # CLSU Web CMS
 
-CLSU Web CMS is a Laravel 12 content management system for Central Luzon State University college pages, departments, institutes, news, announcements, alumni, facilities, scholarships, downloads, Facebook syncing, and Google Drive media storage.
+CLSU Web CMS is a Laravel 12 content management system for Central Luzon State University public pages, colleges, departments, institutes, news, announcements, alumni, facilities, scholarships, Facebook syncing, and Google Drive media storage.
 
 ## Main Guide
 
-For the full system manual, read:
+Use the full system guide for setup, operations, deployment, troubleshooting, and maintenance:
 
 [docs/SYSTEM_TUTORIAL.md](/d:/htdocs/CLSU/docs/SYSTEM_TUTORIAL.md)
 
-It includes:
-- full local setup
-- database setup using Laravel migrations
-- admin access
-- daily content management workflow
-- Google Drive and Facebook integration
-- deployment and maintenance
-- backup and recovery
-- troubleshooting
-
 ## Quick Start
 
-1. Install dependencies:
+1. Install backend and frontend dependencies:
 
 ```bash
 composer install
 npm install
 ```
 
-2. Create `.env` and update database settings.
+Or run the helper:
 
-3. Generate the app key:
+```bash
+composer setup
+```
+
+2. Create `.env` if needed, then update it for MySQL and local development.
+
+Recommended local values:
+
+```env
+APP_URL=http://localhost:8001
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=clsu
+DB_USERNAME=root
+DB_PASSWORD=
+SESSION_DRIVER=database
+CACHE_STORE=database
+QUEUE_CONNECTION=database
+FILESYSTEM_DISK=google
+VITE_HMR_HOST=localhost
+VITE_HMR_PORT=5173
+```
+
+3. Generate the app key if needed:
 
 ```bash
 php artisan key:generate
 ```
 
-4. Create or reset the database schema:
+4. Run the schema setup:
 
 ```bash
 php artisan migrate
 ```
+
+Fresh installs use the baseline schema loader in:
+
+- [database/migrations/2026_03_30_000000_load_initial_schema.php](/d:/htdocs/CLSU/database/migrations/2026_03_30_000000_load_initial_schema.php)
+- [database/migrations/schema/initial-schema.sql](/d:/htdocs/CLSU/database/migrations/schema/initial-schema.sql)
 
 5. Start development:
 
@@ -54,23 +73,45 @@ npm run dev
 php artisan serve --host=localhost --port=8001
 ```
 
+You can also use:
+
+```bash
+composer dev
+```
+
 6. Open:
 
-```text
-http://localhost:8001
-http://localhost:8001/admin/login
-```
+- `http://localhost:8001`
+- `http://localhost:8001/admin/login`
 
 ## Default Superadmin
 
-The initial migration creates a default superadmin account if it does not already exist:
-
-- Email: `adminCLSU@clsu.edu`
-
-You can also reset/create it with:
+Create or reset the admin account with:
 
 ```bash
 php artisan admin:create-user
+```
+
+Current defaults:
+
+- Email: `adminCLSU@clsu.edu`
+- Password: `!CLSUCi$@_2026`
+
+Custom credentials:
+
+```bash
+php artisan admin:create-user your@email.com yourpassword
+```
+
+## Common Commands
+
+```bash
+php artisan test
+php artisan google:check-token
+php artisan facebook:fetch-posts --use-db
+php artisan queue:listen --tries=1
+php artisan schedule:work
+npm run build
 ```
 
 ## Additional Docs
